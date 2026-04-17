@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ta-da Elite</title>
+  <meta name="theme-color" content="#7c3aed" />
+  <style>
+    :root{
+      --bg1:#dbeafe;
+      --bg2:#ede9fe;
+      --bg3:#ffedd5;
+      --card:rgba(255,255,255,.82);
+      --card-strong:rgba(255,255,255,.94);
+      --text:#1f2340;
+      --muted:#64748b;
+      --primary:#7c3aed;
+      --primary2:#0ea5e9;
+      --accent:#f59e0b;
+      --success:#10b981;
+      --danger:#ef4444;
+      --shadow:0 18px 44px rgba(31,35,64,.10);
+      --shadow-strong:0 24px 60px rgba(31,35,64,.14);
+      --radius:26px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:Inter, ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.55), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2) 50%, var(--bg3));
+      min-height:100vh;
+    }
+    body.theme-neon{
+      background:linear-gradient(135deg,#071226,#1b0d3b,#3a0f57);
+      color:#eef2ff;
+    }
+    body.theme-neon .card{background:rgba(18,24,54,.78); color:#eef2ff; border:1px solid rgba(255,255,255,.1)}
+    body.theme-neon .muted{color:#c7d2fe}
+    body.theme-neon input, body.theme-neon select{background:rgba(255,255,255,.10); color:#eef2ff; border-color:rgba(255,255,255,.12)}
+    body.theme-neon .pill, body.theme-neon .task, body.theme-neon .alert-line, body.theme-neon .share-box, body.theme-neon .share-card {background:rgba(255,255,255,.08); color:#eef2ff}
+    body.theme-neon .secondary, body.theme-neon .ghost{background:rgba(255,255,255,.12); color:#eef2ff; border-color:rgba(255,255,255,.16)}
+    .container{max-width:640px;margin:0 auto;padding:18px 14px 46px}
+    .hero{text-align:center;margin-bottom:14px}
+    h1{
+      margin:6px 0 4px;
+      font-size:2.5rem;
+      letter-spacing:-.05em;
+      font-weight:900;
+      background:linear-gradient(90deg,var(--primary),var(--primary2),var(--accent));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .tagline{color:var(--muted);font-weight:700;font-size:.95rem}
+    .topnav{
+      display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0 18px;
+      position:sticky;top:0;z-index:30;
+      background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.35));
+      backdrop-filter: blur(14px);
+      padding:10px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.45);
+      box-shadow:0 10px 24px rgba(31,35,64,.08);
+    }
+    @media (max-width:560px){ .topnav{grid-template-columns:repeat(3,1fr)} }
+    button{
+      border:none;border-radius:16px;padding:11px 12px;cursor:pointer;font-weight:800;
+      font-size:.88rem;background:linear-gradient(90deg,var(--primary),var(--primary2));
+      color:white;box-shadow:0 10px 22px rgba(124,58,237,.22);transition:.15s transform,.18s filter,.2s box-shadow;
+      letter-spacing:-.01em;
+    }
+    button:hover{filter:brightness(1.03)} button:active{transform:scale(.98)}
+    .secondary{background:rgba(255,255,255,.92);color:var(--text);box-shadow:none;border:1px solid rgba(124,58,237,.15)}
+    .ghost{background:rgba(255,255,255,.72);color:var(--text);box-shadow:none}
+    .active{background:linear-gradient(90deg,#8b5cf6,#ec4899);color:#fff}
+    .small{padding:8px 10px;font-size:.78rem;border-radius:14px}
+    input,select{
+      width:100%;border:none;outline:none;border-radius:16px;padding:12px 13px;font-size:.95rem;
+      background:rgba(255,255,255,.92);color:var(--text);border:1px solid rgba(124,58,237,.12)
+    }
+    .card{
+      background:var(--card);backdrop-filter: blur(16px);border:1px solid rgba(255,255,255,.45);
+      border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;
+    }
+    .card-strong{background:var(--card-strong);box-shadow:var(--shadow-strong)}
+    .row{display:flex;gap:8px;align-items:center}
+    .wrap{flex-wrap:wrap}.between{justify-content:space-between}.center{text-align:center}
+    .muted{color:var(--muted)} .label{font-size:.78rem;font-weight:900;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+    .section-title{font-size:1rem;font-weight:900;margin:0 0 10px}.big{font-size:1.35rem;font-weight:900}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .pill{background:rgba(255,255,255,.84);border-radius:18px;padding:12px;text-align:center}
+    .pill .n{font-size:1.2rem;font-weight:900}
+    .progress{height:10px;background:rgba(124,58,237,.10);border-radius:999px;overflow:hidden;margin:8px 0 6px}
+    .progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#ec4899,var(--accent));border-radius:999px}
+    .map-grid{display:grid;gap:10px}
+    .world-node{
+      position:relative;overflow:hidden;border-radius:22px;padding:16px;cursor:pointer;
+      border:1px solid rgba(255,255,255,.55);box-shadow:0 12px 28px rgba(31,35,64,.10)
+    }
+    .world-node::after{
+      content:"";position:absolute;right:-18px;top:-18px;width:78px;height:78px;border-radius:999px;background:rgba(255,255,255,.24)
+    }
+    .world-name{font-weight:900;font-size:1.05rem;margin-top:6px}.world-sub{font-size:.9rem;color:var(--muted);margin-top:4px}
+    .task{
+      display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+      background:rgba(255,255,255,.92);border-radius:18px;padding:12px;margin-top:10px;box-shadow:0 6px 18px rgba(31,35,64,.06)
+    }
+    .task.done{opacity:.62;text-decoration:line-through}
+    .quick-list{display:flex;flex-wrap:wrap;gap:8px}
+    .quick-list button{background:white;color:var(--text);box-shadow:none;border:1px solid rgba(124,58,237,.12)}
+    
+    
+
+    .shop-button{
+      position:relative;
+      overflow:hidden;
+    }
+    .shop-button:hover,
+    .shop-button:focus{
+      filter:brightness(1.04);
+      box-shadow:0 0 0 1px rgba(255,255,255,.22), 0 0 22px rgba(124,58,237,.34), 0 0 34px rgba(14,165,233,.24);
+    }
+    .shop-button:active{
+      transform:scale(.96);
+      box-shadow:0 0 0 1px rgba(255,255,255,.24), 0 0 28px rgba(124,58,237,.40), 0 0 40px rgba(14,165,233,.28);
+    }
+    .shop-button.pressed{
+      animation:shopBounce .35s ease, shopGlow .55s ease;
+    }
+    .coin-fly{
+      position:fixed;
+      z-index:1200;
+      font-size:1.4rem;
+      pointer-events:none;
+      animation:coinFly .9s cubic-bezier(.2,.8,.2,1) forwards;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.18));
+    }
+    .coin-count-pop{
+      animation:coinCountPulse .7s ease;
+    }
+    .purchased-burst{
+      position:fixed;
+      z-index:1201;
+      pointer-events:none;
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(124,58,237,.94), rgba(14,165,233,.92));
+      color:white;
+      font-weight:900;
+      font-size:.88rem;
+      box-shadow:0 14px 30px rgba(31,35,64,.18);
+      animation:purchasedPop .95s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+    @keyframes shopBounce{
+      0%{transform:scale(1)}
+      35%{transform:scale(.9)}
+      70%{transform:scale(1.08)}
+      100%{transform:scale(1)}
+    }
+    @keyframes shopGlow{
+      0%{box-shadow:0 0 0 rgba(124,58,237,0)}
+      40%{box-shadow:0 0 24px rgba(124,58,237,.38), 0 0 38px rgba(14,165,233,.22)}
+      100%{box-shadow:0 8px 18px rgba(31,35,64,.18)}
+    }
+    @keyframes coinFly{
+      0%{transform:translate(0,0) scale(.9); opacity:0}
+      15%{opacity:1}
+      100%{transform:translate(var(--dx), var(--dy)) scale(.72); opacity:0}
+    }
+    @keyframes coinCountPulse{
+      0%{transform:scale(1)}
+      30%{transform:scale(1.16)}
+      100%{transform:scale(1)}
+    }
+    @keyframes purchasedPop{
+      0%{transform:translate(-50%, 8px) scale(.85); opacity:0}
+      20%{opacity:1}
+      100%{transform:translate(-50%, -34px) scale(1); opacity:0}
+    }
+    @keyframes shopBounce{
+      0%{transform:scale(1)}
+      35%{transform:scale(.9)}
+      70%{transform:scale(1.08)}
+      100%{transform:scale(1)}
+    }
+    @keyframes shopGlow{
+      0%{box-shadow:0 0 0 rgba(124,58,237,0)}
+      40%{box-shadow:0 0 24px rgba(124,58,237,.38), 0 0 38px rgba(14,165,233,.22)}
+      100%{box-shadow:0 8px 18px rgba(31,35,64,.18)}
+    }
+    @keyframes coinFly{
+      0%{transform:translate(0,0) scale(.9); opacity:0}
+      15%{opacity:1}
+      100%{transform:translate(var(--dx), var(--dy)) scale(.72); opacity:0}
+    }
+.shop-button{
+      background:linear-gradient(180deg, rgba(124,58,237,.85), rgba(14,165,233,.85));
+      color:#ffffff;
+      box-shadow:0 8px 18px rgba(31,35,64,.18);
+    }
+.leader-row,.alert-line{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      background:rgba(255,255,255,.88);border-radius:18px;padding:12px 14px;margin-top:10px
+    }
+    .focus-timer{
+      width:180px;height:180px;border-radius:999px;margin:14px auto;display:flex;align-items:center;justify-content:center;flex-direction:column;
+      background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.98), rgba(255,255,255,.76));
+      border:4px solid rgba(124,58,237,.12);box-shadow:0 18px 42px rgba(31,35,64,.12)
+    }
+    .timer-time{font-size:2rem;font-weight:900}
+    .share-card{
+      background:linear-gradient(135deg,#fff8ff,#fff7ef);border-radius:28px;padding:20px;border:1px solid rgba(255,255,255,.65);
+      box-shadow:0 18px 48px rgba(31,35,64,.10);text-align:center
+    }
+    .share-title{
+      font-size:2rem;font-weight:900;background:linear-gradient(90deg,var(--primary),#ec4899,var(--accent));
+      -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px
+    }
+    .share-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    .share-box{background:rgba(255,255,255,.92);border-radius:18px;padding:12px}.share-box .n{font-size:1.2rem;font-weight:900}
+
+    .premium-hero{
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.55), transparent 28%),
+        linear-gradient(135deg, rgba(124,58,237,.18), rgba(14,165,233,.16), rgba(245,158,11,.14));
+      border:1px solid rgba(255,255,255,.55);
+    }
+    .spotlight-card{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.24), transparent 30%),
+        linear-gradient(135deg, rgba(124,58,237,.16), rgba(236,72,153,.12), rgba(14,165,233,.12));
+      border:1px solid rgba(255,255,255,.55);
+      box-shadow:var(--shadow-strong);
+    }
+    .level-banner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:14px;
+      padding:14px;
+      border-radius:20px;
+      background:rgba(255,255,255,.68);
+      border:1px solid rgba(255,255,255,.5);
+    }
+    .flame-strip{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+    }
+    .flame-box{
+      flex:1;
+      background:rgba(255,255,255,.68);
+      border-radius:18px;
+      padding:12px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,.5);
+    }
+    .pulse-dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      display:inline-block;
+      background:linear-gradient(90deg,var(--primary),#ec4899);
+      box-shadow:0 0 0 0 rgba(124,58,237,.45);
+      animation:pulse 1.8s infinite;
+      margin-right:8px;
+      vertical-align:middle;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(124,58,237,.45)}
+      70%{box-shadow:0 0 0 10px rgba(124,58,237,0)}
+      100%{box-shadow:0 0 0 0 rgba(124,58,237,0)}
+    }
+
+    .metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .metric{
+      background:rgba(255,255,255,.76);
+      border-radius:18px;
+      padding:12px 10px;
+      text-align:center;
+      border:1px solid rgba(255,255,255,.42);
+    }
+    .metric .n{font-size:1.15rem;font-weight:900}
+    .subtle-divider{
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(100,116,139,.25), transparent);
+      margin:12px 0;
+    }
+    .loot-overlay{
+      position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+      background:rgba(15,23,42,.28); z-index:1001; backdrop-filter: blur(6px);
+    }
+    .loot-overlay.show{display:flex}
+    .loot-box{
+      width:min(82vw,320px);
+      border-radius:28px;
+      padding:24px 20px;
+      text-align:center;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.36), transparent 28%),
+        linear-gradient(135deg, rgba(124,58,237,.98), rgba(14,165,233,.94), rgba(245,158,11,.92));
+      color:white;
+      box-shadow:0 28px 80px rgba(15,23,42,.28);
+      transform:scale(.92);
+    }
+    .loot-box.opening{
+      animation:lootPop .5s cubic-bezier(.2,.9,.2,1.12) forwards, lootShake .55s ease-in-out;
+    }
+    .loot-icon{
+      font-size:3.3rem;
+      line-height:1;
+      margin-bottom:10px;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,.18));
+    }
+    .loot-title{
+      font-size:1.45rem;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+    .loot-sub{
+      margin-top:8px;
+      opacity:.92;
+      font-weight:700;
+    }
+    .loot-reward{
+      margin-top:16px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.24);
+      border-radius:18px;
+      padding:14px 12px;
+      font-size:1.05rem;
+      font-weight:900;
+    }
+    .loot-stars{
+      margin-top:12px;
+      font-size:1.15rem;
+      letter-spacing:.35rem;
+      animation:lootTwinkle 1.1s ease-in-out infinite;
+    }
+    @keyframes lootPop{
+      from{transform:scale(.86) translateY(10px)}
+      to{transform:scale(1) translateY(0)}
+    }
+    @keyframes lootShake{
+      0%,100%{rotate:0deg}
+      20%{rotate:-2deg}
+      40%{rotate:2deg}
+      60%{rotate:-1deg}
+      80%{rotate:1deg}
+    }
+    @keyframes lootTwinkle{
+      0%,100%{opacity:.55; transform:translateY(0)}
+      50%{opacity:1; transform:translateY(-2px)}
+    }
+    .celebrate{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(17,24,39,.16);z-index:999}
+    .celebrate.show{display:flex}
+    .cele-card{
+      background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-radius:32px;padding:26px 22px;width:min(88vw,420px);
+      box-shadow:0 24px 80px rgba(17,24,39,.18);text-align:center;transform:scale(.84) rotate(-4deg);animation:pop .42s cubic-bezier(.2,.9,.2,1.12) forwards
+    }
+    .cele-card.neon{box-shadow:0 0 26px rgba(96,165,250,.65),0 0 60px rgba(236,72,153,.42)}
+    .cele-card.cosmic{background:linear-gradient(135deg, rgba(16,24,52,.97), rgba(64,32,112,.96)); color:#fff}
+    .cele-card.goldrush{background:linear-gradient(135deg, rgba(255,248,220,.98), rgba(252,211,77,.92))}
+    .cele-title{
+      font-size:2rem;font-weight:900;background:linear-gradient(90deg,var(--primary),#ec4899,var(--accent));
+      -webkit-background-clip:text;background-clip:text;color:transparent
+    }
+    .cele-xp{font-size:2.45rem;font-weight:900;margin:.2rem 0}
+    .cele-text{font-size:1rem;font-weight:800}.cele-sub{color:var(--muted);margin-top:8px;font-weight:700}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:.78rem;font-weight:900;margin:6px 0 2px}
+    .rare{background:#dbeafe;color:#1d4ed8}.legendary{background:#fef3c7;color:#92400e}
+    canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:998}
+    @keyframes pop{to{transform:scale(1) rotate(0)}}
+  
+/* Shop readability fix */
+.card{
+  color:#1f2340;
+}
+.muted{
+  color:#475569 !important;
+}
+
+
+    .avatar-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .avatar-lg{width:132px;height:132px;border-radius:34px;object-fit:cover;background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;color:white;font-size:3rem;font-weight:900;box-shadow:0 18px 40px rgba(31,35,64,.18)}
+    .profile-hero{display:grid;grid-template-columns:152px 1fr;gap:18px;align-items:center}
+    .profile-photo-stack{display:grid;gap:10px}
+    .profile-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .profile-gallery-shot{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:18px;background:#eef2ff;box-shadow:0 10px 20px rgba(31,35,64,.08)}
+    .avatar-sm{width:54px;height:54px;border-radius:18px;object-fit:cover;background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;color:white;font-weight:900}
+    .upload-label{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.9);border:1px solid rgba(124,58,237,.14);font-weight:800;cursor:pointer}
+    .hidden-file{display:none}
+    .win-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    @media (max-width:860px){.profile-hero{grid-template-columns:1fr}.profile-gallery{grid-template-columns:repeat(3,1fr)}.win-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.win-grid,.profile-gallery{grid-template-columns:1fr}}
+    .win-card{background:rgba(255,255,255,.92);border-radius:22px;padding:12px;border:1px solid rgba(255,255,255,.48);box-shadow:0 10px 26px rgba(31,35,64,.08)}
+    .win-shot{width:100%;height:180px;object-fit:cover;border-radius:18px;background:#eef2ff;margin-top:10px}
+    .mini-progress{display:flex;gap:10px;margin-top:10px}
+    .mini-stat{flex:1;background:rgba(255,255,255,.72);padding:12px;border-radius:18px;text-align:center;border:1px solid rgba(255,255,255,.45)}
+    .note-input{min-height:86px;resize:vertical}
+
+
+    .auth-shell{min-height:72vh;display:flex;align-items:center;justify-content:center}
+    .auth-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;width:min(980px,100%)}
+    .auth-hero{padding:24px;border-radius:32px;background:
+      radial-gradient(circle at top left, rgba(255,255,255,.5), transparent 28%),
+      linear-gradient(135deg, rgba(124,58,237,.18), rgba(14,165,233,.16), rgba(245,158,11,.18));border:1px solid rgba(255,255,255,.55)}
+    .auth-form{padding:22px;border-radius:30px;background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.6);box-shadow:var(--shadow-strong)}
+    .hero-badge{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.72);font-weight:900;font-size:.82rem}
+    .feature-checks{display:grid;gap:10px;margin-top:16px}
+    .feature-check{background:rgba(255,255,255,.72);border-radius:18px;padding:12px 14px;font-weight:800}
+    .paywall-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.38);z-index:1202;backdrop-filter:blur(8px)}
+    .paywall-overlay.show{display:flex}
+    .paywall-modal{width:min(92vw,430px);border-radius:32px;padding:24px;background:rgba(255,255,255,.97);box-shadow:0 28px 90px rgba(15,23,42,.24);border:1px solid rgba(255,255,255,.72)}
+    .paywall-list{display:grid;gap:10px;margin:14px 0}
+    .paywall-item{border-radius:18px;padding:12px 14px;background:rgba(124,58,237,.08);font-weight:800}
+    .plan-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;font-size:.8rem;font-weight:900}
+    .plan-badge.free{background:#e2e8f0;color:#334155}
+    .plan-badge.premium{background:linear-gradient(90deg,#7c3aed,#ec4899);color:white}
+    .locked-card{border:1px dashed rgba(124,58,237,.3);background:rgba(255,255,255,.88);border-radius:22px;padding:18px;text-align:center}
+    .account-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .account-stat{background:rgba(255,255,255,.82);border-radius:18px;padding:14px;text-align:center}
+    .account-stat .n{font-size:1.18rem;font-weight:900}
+    @media (max-width:760px){.auth-grid{grid-template-columns:1fr}.account-grid{grid-template-columns:1fr}}
+
+
+    .topnav:empty{display:none;}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+
+<div class="container">
+  <div class="hero">
+    <h1>✨ Ta-da Elite ✨</h1>
+    <div class="tagline">Life's a game. Let's win it!</div>
+  </div>
+
+  <div class="topnav" id="tabs"></div>
+  <div id="app"></div>
+</div>
+
+<div id="celebrate" class="celebrate">
+  <div id="celeCard" class="cele-card classic">
+    <div class="cele-title">✨ Ta-da! ✨</div>
+    <div id="celeBadgeWrap"></div>
+    <div id="celeXp" class="cele-xp">+10 XP</div>
+    <div id="celeText" class="cele-text">Win unlocked</div>
+    <div id="celeWho" class="cele-sub">Another win for you 🎉</div>
+  </div>
+</div>
+
+<div id="lootOverlay" class="loot-overlay">
+  <div id="lootBox" class="loot-box">
+    <div id="lootIcon" class="loot-icon">🎁</div>
+    <div class="loot-title">Daily Reward Box</div>
+    <div id="lootSub" class="loot-sub">Opening your reward...</div>
+    <div id="lootReward" class="loot-reward">✨ Loading reward...</div>
+    <div class="loot-stars">✦ ✦ ✦</div>
+  </div>
+</div>
+
+
+<div id="paywallOverlay" class="paywall-overlay">
+  <div class="paywall-modal">
+    <div class="label">Ta-da Elite</div>
+    <div class="big" style="margin-top:6px;">Unlock Your Full Potential 🚀</div>
+    <div class="muted" style="margin-top:8px;">Turn your life into a game you can actually win. Upgrade for premium photos, themes, and full progress history.</div>
+    <div class="paywall-list">
+      <div class="paywall-item">📸 Capture your wins with photos</div>
+      <div class="paywall-item">🎨 Unlock premium themes</div>
+      <div class="paywall-item">📊 Access your full win history</div>
+      <div class="paywall-item">🏆 Get the Elite player experience for $5/month</div>
+    </div>
+    <div class="row" style="gap:10px;align-items:stretch;margin-top:12px;">
+      <button id="paywallUpgradeBtn" style="flex:1;">Upgrade with Stripe</button>
+      <button id="paywallCloseBtn" class="secondary" style="flex:1;">Maybe later</button>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="label">Have a manual access code?</div>
+      <div class="row" style="margin-top:8px;">
+        <input id="paywallUnlockInput" placeholder="Enter access code" autocomplete="one-time-code" />
+        <button id="paywallUnlockBtn" class="secondary">Redeem</button>
+      </div>
+      <div class="muted" style="margin-top:8px;font-size:.82rem;">Use your business access code UNLOCK, or complete checkout through Stripe.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const WORLDS = [
+    { key:"work", name:"Hustle Hub", icon:"💼", color1:"#dbeafe", color2:"#e0e7ff", templates:["Reply to one email","Finish top priority","Plan tomorrow","Organize one file","Follow up on one message"] },
+    { key:"home", name:"Cozy Cove", icon:"🏠", color1:"#ffedd5", color2:"#fef3c7", templates:["Tidy one area","Unload dishwasher","Put away 10 things","Laundry reset","Clear one surface"] },
+    { key:"health", name:"Energy Island", icon:"💪", color1:"#dcfce7", color2:"#d1fae5", templates:["Drink water","Take meds","Stretch 5 minutes","Short walk","Healthy snack"] },
+    { key:"money", name:"Money Mountain", icon:"💰", color1:"#fef9c3", color2:"#ecfccb", templates:["Check balance","Review spending","Move money to savings","Pay one bill","Cancel one unused subscription"] },
+    { key:"relationships", name:"Heart Haven", icon:"❤️", color1:"#ffe4e6", color2:"#fce7f3", templates:["Text someone","Call family","Send appreciation","Plan time together","Check in with partner"] },
+    { key:"personal", name:"Growth Garden", icon:"🌱", color1:"#ede9fe", color2:"#f5d0fe", templates:["Journal","Read 5 pages","Brain dump","Reflect on goals","Create something tiny"] }
+  ];
+
+  const COMPANION_MODES = {
+    hype: {
+      label: "🔥 Hype Bestie",
+      sub: "Big energy and celebration",
+      greeting: (name, world) => `${name}, let’s absolutely crush ${world.name} today 🔥`,
+      overwhelmed: (name, world) => `${name}, no spiral. One tiny win in ${world.name} and we’re back 😤`,
+      thriving: (name, world) => `${name}, you are on FIRE in ${world.name} ✨`,
+      reward: () => "Ta-da! You crushed that 🔥",
+      share: () => "I was on fire today 🔥"
+    },
+    gentle: {
+      label: "💛 Gentle Guide",
+      sub: "Soft support and low pressure",
+      greeting: (name, world) => `${name}, let’s take ${world.name} one soft step at a time 💛`,
+      overwhelmed: (name, world) => `${name}, let’s be gentle. One tiny step in ${world.name} is enough 🌼`,
+      thriving: (name, world) => `${name}, you’re doing beautifully in ${world.name} ✨`,
+      reward: () => "Ta-da! That was a beautiful little win 💛",
+      share: () => "Small wins still count 💛"
+    },
+    ceo: {
+      label: "🧠 CEO Mode",
+      sub: "Focused, direct, strategic",
+      greeting: (name, world) => `${name}, execute the highest-value move in ${world.name}.`,
+      overwhelmed: (name, world) => `${name}, reduce scope. One efficient action in ${world.name}.`,
+      thriving: (name, world) => `${name}, performance is strong in ${world.name}. Continue.`,
+      reward: () => "Ta-da. Objective complete.",
+      share: () => "Progress report: successful."
+    },
+    chaos: {
+      label: "😈 Chaos Mode",
+      sub: "Playful, messy, momentum-first",
+      greeting: (name, world) => `${name}, welcome to ${world.name}. Tiny goblin mission time 😈`,
+      overwhelmed: (name, world) => `${name}, gremlin recovery quest. One weird little win in ${world.name}.`,
+      thriving: (name, world) => `${name}, chaos magic is WORKING in ${world.name} ⚡`,
+      reward: () => "Ta-da! Loot acquired, goblin style 😈",
+      share: () => "I bribed my brain with sparkles and it worked 😌"
+    },
+    angel: {
+      label: "👼 Reset Angel",
+      sub: "Tender, shame-free recovery",
+      greeting: (name, world) => `${name}, ${world.name} is still here for you. We can begin again ✨`,
+      overwhelmed: (name, world) => `${name}, nothing is ruined. One gentle win in ${world.name} is enough today 🤍`,
+      thriving: (name, world) => `${name}, I’m really proud of how you’re showing up in ${world.name} 🌙`,
+      reward: () => "Ta-da! You showed up, and that counts ✨",
+      share: () => "Today still counts ✨"
+    }
+  };
+
+  const STYLE_LABELS = {
+    classic:"Classic",
+    neon:"Neon",
+    cosmic:"Cosmic",
+    goldrush:"Gold Rush",
+    arcade:"Arcade",
+    soft:"Soft"
+  };
+
+  const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/aFaeVc8kF8mn9274yCgIo02";
+  const BUSINESS_ACCESS_CODE = "UNLOCK";
+  const API_BASE = "";
+  const STRIPE_PRICE_ID = "elite_monthly";
+
+  function futureDate(days){
+    const d = new Date(Date.now() + days*86400000);
+    return d.toISOString().slice(0,10);
+  }
+
+  const defaults = {
+    identity: {
+      name: "",
+      companionMode: "hype",
+      badDayMode: false
+    },
+    progression: {
+      xp: 0,
+      coins: 0,
+      streak: 0,
+      streakShields: 1,
+      achievements: [],
+      chaosMeter: 0,
+      todayXP: {},
+      prepChain: {
+        selectedTimer: false,
+        openedWorldToday: false,
+        createdTaskToday: false,
+        comboAwarded: false
+      }
+    },
+    equipment: {
+      inventory: {
+        themes: ["default"],
+        sounds: ["default"],
+        modes: ["hype","gentle","ceo"],
+        celebrationStyles: ["classic"],
+        soundStyles: ["classic","soft"]
+      },
+      equipped: {
+        theme: "default",
+        sound: "default",
+        mode: "hype",
+        celebrationStyle: "classic",
+        soundStyle: "classic"
+      }
+    },
+    goals: {
+      longGoals: [
+        { id: "lg1", title: "Build emergency savings", world: "money", why: "Peace and security", targetDate: "", progress: 0 },
+        { id: "lg2", title: "Create a calmer home", world: "home", why: "Less chaos, more peace", targetDate: "", progress: 0 }
+      ],
+      shortGoals: [
+        { id: "sg1", longGoalId: "lg1", title: "Save first $250", dueDate: "", progress: 0, status: "active" },
+        { id: "sg2", longGoalId: "lg2", title: "Reset kitchen this week", dueDate: "", progress: 0, status: "active" }
+      ]
+    },
+    quests: {
+      daily: [
+        { id: "dq1", title: "Complete 2 tasks", linkedShortGoalId: null, done: false, rewardXP: 20, rewardCoins: 10, current: 0, target: 2, frequency:"daily" },
+        { id: "dq2", title: "Do 1 focus session", linkedShortGoalId: null, done: false, rewardXP: 20, rewardCoins: 10, current: 0, target: 1, frequency:"daily" }
+      ],
+      focus: [
+        { id: "fq1", title: "Finish one 20-minute focus sprint", linkedShortGoalId: "sg1", done: false, rewardXP: 25, rewardCoins: 12, current: 0, target: 1, frequency:"weekly" }
+      ],
+      life: [
+        { id: "lq1", title: "Review spending 3 times this week", linkedShortGoalId: "sg1", done: false, rewardXP: 40, rewardCoins: 20, current: 0, target: 3, frequency:"weekly" },
+        { id: "lq2", title: "Reset kitchen this week", linkedShortGoalId: "sg2", done: false, rewardXP: 35, rewardCoins: 18, current: 0, target: 3, frequency:"weekly" }
+      ]
+    },
+    tasks: {
+      byWorld: {
+        money: [
+          { id: 1, text: "Check account balance", world: "money", linkedQuestId: "lq1", linkedShortGoalId: "sg1", done: false }
+        ],
+        home: [
+          { id: 2, text: "Reset kitchen counter", world: "home", linkedQuestId: "lq2", linkedShortGoalId: "sg2", done: false }
+        ]
+      }
+    },
+    worlds: {
+      activeWorld: "work",
+      worldActivity: {}
+    },
+    timing: {
+      timerSeconds: 1500,
+      timerRunning: false,
+      timerEndAt: null,
+      selectedTimerMinutes: 25,
+      lastActiveDate: "",
+      usedShieldToday: false,
+      comebackReady: false,
+      lastReward: 0,
+      dailyResets: { lastResetDate: "" },
+      lastWeeklyResetDate: ""
+    },
+    recurring: {
+      tasks: [],
+      quests: []
+    },
+    ui: {
+      view: "today",
+      editing: {
+        longGoalId: null,
+        shortGoalId: null,
+        taskId: null,
+        taskWorld: null,
+        importantDateId: null
+      }
+    },
+    reminders: {
+      importantDates: [
+        { id: 1, title: "Doctor appointment", date: futureDate(2), notes: "Bring insurance card" },
+        { id: 2, title: "Rent due", date: futureDate(3), notes: "Pay before noon" }
+      ]
+    },
+    aiProfile: {
+      preferredWorld: "",
+      mostAvoidedWorld: "",
+      favoriteTimer: 25,
+      recoveryStyle: "gentle",
+      lastSuggestion: "",
+      suggestionHistory: []
+    },
+    profile: {
+      headline: "Life's a game. Let's win it!",
+      photo: "",
+      vibe: "Winning my day, one Ta-da at a time ✨"
+    },
+    auth: {
+      loggedIn: false,
+      email: "",
+      password: "",
+      plan: "free",
+      memberSince: "",
+      unlockedAt: ""
+    },
+    winLog: []
+  };
+
+  const SHOP = [
+    { id:"theme_neon", name:"Neon Theme", cost:120, kind:"theme", value:"neon" },
+    { id:"style_cosmic", name:"Cosmic Celebration", cost:160, kind:"celebrationStyle", value:"cosmic" },
+    { id:"sound_arcade", name:"Arcade Sound Style", cost:140, kind:"soundStyle", value:"arcade" },
+    { id:"mode_angel", name:"Reset Angel Mode", cost:110, kind:"mode", value:"angel" }
+  ];
+
+  const ACHIEVEMENTS = [
+    { id:"first_task", name:"First Ta-da!", desc:"Complete your first task", check:s => totalCompletedTasks(s) >= 1 },
+    { id:"five_tasks", name:"Momentum Builder", desc:"Complete 5 tasks", check:s => totalCompletedTasks(s) >= 5 },
+    { id:"focus_initiated", name:"Focus Initiated", desc:"Complete one focus session", check:s => (s.quests.focus || []).some(q => q.done) },
+    { id:"xp_100", name:"XP Hunter", desc:"Earn 100 XP", check:s => s.progression.xp >= 100 },
+    { id:"streak_3", name:"Streak Starter", desc:"Reach a 3-day streak", check:s => s.progression.streak >= 3 }
+  ];
+
+  const $ = s => document.querySelector(s) || {addEventListener:()=>{}, value:"", innerHTML:""};
+  let timerInterval = null;
+  let state = load();
+
+  function deepMerge(target, source){
+    for(const key in source){
+      if(source[key] && typeof source[key] === "object" && !Array.isArray(source[key])){
+        target[key] = deepMerge(target[key] || {}, source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+    return target;
+  }
+
+  function cloneDefaults(){
+    return JSON.parse(JSON.stringify(defaults));
+  }
+
+  function load(){
+    try{
+      const raw = JSON.parse(localStorage.getItem("tada.elite.final") || "{}");
+      return deepMerge(cloneDefaults(), raw);
+    } catch {
+      return cloneDefaults();
+    }
+  }
+
+  function save(){ localStorage.setItem("tada.elite.final", JSON.stringify(state)); }
+
+  function isPremiumUser(){ return (state.auth && state.auth.plan) === "premium"; }
+  function planBadge(){
+    return isPremiumUser()
+      ? `<span class="plan-badge premium">🚀 Elite • $5/month</span>`
+      : `<span class="plan-badge free">Free Player</span>`;
+  }
+  function openPaywall(reason=""){
+    state.ui = state.ui || {};
+    state.ui.paywallReason = reason || "";
+    save();
+    const el = document.getElementById("paywallOverlay");
+    if(el) el.classList.add("show");
+  }
+  function closePaywall(){
+    const el = document.getElementById("paywallOverlay");
+    if(el) el.classList.remove("show");
+  }
+  function setPremiumState(plan, unlockedAt){
+    state.auth.plan = plan || "free";
+    state.auth.unlockedAt = unlockedAt || state.auth.unlockedAt || "";
+    save();
+  }
+
+  async function callApi(path, options={}){
+    const response = await fetch(`${API_BASE}${path}`, {
+      method: options.method || "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+
+    let data = {};
+    try { data = await response.json(); } catch {}
+    return { ok: response.ok, status: response.status, data };
+  }
+
+  async function refreshPlanStatus(opts={}){
+    const silent = !!opts.silent;
+    const email = (state.auth && state.auth.email || "").trim();
+    if(!email) return false;
+
+    try{
+      const result = await callApi(`/api/account-status?email=${encodeURIComponent(email)}`);
+      if(!result.ok){
+        if(!silent) showCelebration(0, result.data.error || "Could not refresh plan status.", "common");
+        return false;
+      }
+
+      const plan = result.data.plan || "free";
+      const wasPremium = isPremiumUser();
+      setPremiumState(plan, result.data.unlockedAt || "");
+
+      if(plan === "premium" && !wasPremium && !silent){
+        closePaywall();
+        showCelebration(0, "🚀 Ta-da Elite unlocked!", "rare");
+        render();
+      } else if(!silent) {
+        render();
+      }
+      return plan === "premium";
+    } catch(err){
+      console.error("Plan status refresh failed", err);
+      if(!silent) showCelebration(0, "Could not reach the server to verify your plan.", "common");
+      return false;
+    }
+  }
+
+  function goToStripe(){
+    window.location.href = STRIPE_PAYMENT_LINK;
+  }
+
+  async function unlockPremiumFromCode(code, options={}){
+    const rawCode = (code || "").trim();
+    const email = (state.auth && state.auth.email || "").trim();
+
+    if(!rawCode){
+      showCelebration(0, "Enter your access code first.", "common");
+      return false;
+    }
+
+    if(rawCode.toUpperCase() === BUSINESS_ACCESS_CODE){
+      setPremiumState("premium", new Date().toISOString());
+      closePaywall();
+      if(options.clearInput !== false){
+        const paywallInput = document.getElementById("paywallUnlockInput");
+        const accountInput = document.getElementById("accountUnlockCode");
+        if(paywallInput) paywallInput.value = "";
+        if(accountInput) accountInput.value = "";
+      }
+      showCelebration(0, "🚀 Business access unlocked!", "rare");
+      render();
+      return true;
+    }
+
+    if(!email){
+      showCelebration(0, "Add your email before redeeming a code.", "common");
+      return false;
+    }
+
+    try{
+      const result = await callApi("/api/redeem-code", {
+        method: "POST",
+        body: { email, code: rawCode }
+      });
+
+      if(!result.ok || !result.data.ok){
+        showCelebration(0, result.data.error || "❌ That access code didn’t match.", "common");
+        return false;
+      }
+
+      setPremiumState(result.data.plan || "premium", result.data.unlockedAt || new Date().toISOString());
+      closePaywall();
+      if(options.clearInput !== false){
+        const paywallInput = document.getElementById("paywallUnlockInput");
+        const accountInput = document.getElementById("accountUnlockCode");
+        if(paywallInput) paywallInput.value = "";
+        if(accountInput) accountInput.value = "";
+      }
+      showCelebration(0, result.data.message || "🚀 Ta-da Elite unlocked!", "rare");
+      render();
+      return true;
+    } catch(err){
+      console.error("Code redemption failed", err);
+      showCelebration(0, "Could not verify that code right now.", "common");
+      return false;
+    }
+  }
+  function requirePremium(reason=""){
+    if(isPremiumUser()) return false;
+    openPaywall(reason);
+    return true;
+  }
+  function signOutAccount(){
+    state.auth.loggedIn = false;
+    state.ui.view = "today";
+    save(); render();
+  }
+  function handleAuthSubmit(){
+    const name = ($("#authName").value || "").trim();
+    const email = ($("#authEmail").value || "").trim();
+    const password = ($("#authPassword").value || "").trim();
+    if(!name || !email || !password){
+      showCelebration(0, "Please add your name, email, and password to continue.", "common");
+      return;
+    }
+    state.identity.name = name;
+    state.auth.email = email;
+    state.auth.password = password;
+    state.auth.loggedIn = true;
+    state.auth.memberSince = state.auth.memberSince || new Date().toISOString();
+    state.ui.view = "today";
+    save();
+    showCelebration(0, "✨ Account ready. Let’s play.", "rare");
+    render();
+    refreshPlanStatus({ silent:true });
+  }
+  function makeId(prefix="id"){ return `${prefix}_${Date.now()}_${Math.floor(Math.random()*10000)}`; }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+  function todayKey(){ return new Date().toISOString().slice(0,10); }
+  function getTodayDateString(){ return todayKey(); }
+  function totalCompletedTasks(s=state){ return Object.values(s.tasks.byWorld || {}).flat().filter(t => t.done).length; }
+  function worldByKey(key){ return WORLDS.find(w => w.key === key) || WORLDS[0]; }
+  function worldLabel(key){ const w = worldByKey(key); return `${w.name} ${w.icon}`; }
+  function daysUntil(dateStr){ const t = new Date(); t.setHours(0,0,0,0); const d = new Date(dateStr); d.setHours(0,0,0,0); return Math.ceil((d-t)/86400000); }
+  function getLongGoalById(id){ return (state.goals.longGoals || []).find(g => g.id === id); }
+  function getShortGoalById(id){ return (state.goals.shortGoals || []).find(g => g.id === id); }
+  function getShortGoalsForLongGoal(longGoalId){ return (state.goals.shortGoals || []).filter(g => g.longGoalId === longGoalId); }
+  function getActiveShortGoal(){ return (state.goals.shortGoals || []).find(g => g.status === "active" && (g.progress||0) < 100) || null; }
+  function getAllQuests(){ return [...(state.quests.daily || []), ...(state.quests.focus || []), ...(state.quests.life || [])]; }
+  function findQuestById(id){ return getAllQuests().find(q => q.id === id); }
+  function getQuestGoalLabel(shortGoalId){ if(!shortGoalId) return "General momentum"; return getShortGoalById(shortGoalId).title || "Unlinked goal"; }
+  function getNeglectedWorld(){ const now = Date.now(); for(const w of WORLDS){ const last = state.worlds.worldActivity[w.key]; if(last && now - last > 3*24*60*60*1000) return w; } return null; }
+  function getTopWorld(){ const rows = WORLDS.map(w => { const list = state.tasks.byWorld[w.key] || []; const wins = list.filter(t => t.done).length; return { ...w, wins, xp: wins*10 }; }).sort((a,b) => b.xp - a.xp); return rows[0]; }
+  function getUrgentDates(){ return (state.reminders.importantDates || []).map(d => ({...d, daysAway: daysUntil(d.date)})).filter(d => d.daysAway >= 0 && d.daysAway <= 3).sort((a,b) => a.daysAway - b.daysAway); }
+  function initials(name){ return String(name || 'T').trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase() || 'T'; }
+  function getWinLog(){ return Array.isArray(state.winLog) ? state.winLog : (state.winLog=[]); }
+  function recentWins(limit=6){ return getWinLog().slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,limit); }
+  function fileToDataUrl(file){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve(reader.result); reader.onerror=reject; reader.readAsDataURL(file); }); }
+  function getIncompleteTasks(){ return Object.keys(state.tasks.byWorld || {}).flatMap(world => (state.tasks.byWorld[world] || []).filter(t => !t.done).map(t => ({...t, world}))); }
+  function getTodayPriorityTasks(){ const sorted = getIncompleteTasks().sort((a,b)=>(((b.linkedShortGoalId?3:0)+(b.linkedQuestId?2:0))-((a.linkedShortGoalId?3:0)+(a.linkedQuestId?2:0)))); return state.identity.badDayMode ? sorted.slice(0,3) : sorted.slice(0,5); }
+  function getTodayFocusQuests(){ return (state.quests.focus || []).filter(q => !q.done).slice(0,3); }
+
+  function renderLongGoalOptions(selected=""){ return `<option value="">Select long-term goal</option>` + (state.goals.longGoals || []).map(goal => `<option value="${goal.id}" ${selected===goal.id?"selected":""}>${escapeHtml(goal.title)}</option>`).join(""); }
+  function renderShortGoalOptions(selected=""){ return `<option value="">No linked short-term goal</option>` + (state.goals.shortGoals || []).map(goal => `<option value="${goal.id}" ${selected===goal.id?"selected":""}>${escapeHtml(goal.title)}</option>`).join(""); }
+  function renderQuestOptions(selected=""){ return `<option value="">No linked quest</option>` + getAllQuests().map(q => `<option value="${q.id}" ${selected===q.id?"selected":""}>${escapeHtml(q.title)}</option>`).join(""); }
+
+  function runDailyResetIfNeeded(){
+    const today = getTodayDateString();
+    const lastReset = state.timing.dailyResets.lastResetDate || "";
+    if(lastReset === today) return;
+    state.timing.dailyResets.lastResetDate = today;
+    state.progression.todayXP[today] = 0;
+    state.timing.usedShieldToday = false;
+    state.progression.prepChain = { selectedTimer:false, openedWorldToday:false, createdTaskToday:false, comboAwarded:false };
+    state.progression.chaosMeter = 0;
+    (state.quests.daily || []).forEach(q => { q.done = false; q.current = 0; });
+    regenerateDailyRecurringItems();
+    runWeeklyResetIfNeeded();
+    evaluateStreakTransition();
+    save();
+  }
+
+  function getWeekNumber(date){
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  }
+
+  function runWeeklyResetIfNeeded(){
+    const today = new Date();
+    const currentWeekKey = `${today.getUTCFullYear()}-W${getWeekNumber(today)}`;
+    if(state.timing.lastWeeklyResetDate === currentWeekKey) return;
+    state.timing.lastWeeklyResetDate = currentWeekKey;
+    const weeklyTemplates = state.recurring.quests || [];
+    weeklyTemplates.filter(q => q.active && q.frequency === "weekly").forEach(template => {
+      const bucket = template.type === "focus" ? "focus" : "life";
+      const exists = (state.quests[bucket] || []).some(q => q.title === template.title && !q.done);
+      if(!exists){
+        state.quests[bucket].push({
+          id: makeId("wq"),
+          title: template.title,
+          linkedShortGoalId: template.linkedShortGoalId || null,
+          done: false,
+          rewardXP: template.rewardXP,
+          rewardCoins: template.rewardCoins,
+          current: 0,
+          target: template.target
+        });
+      }
+    });
+    save();
+  }
+
+  function evaluateStreakTransition(){
+    const today = getTodayDateString();
+    const lastActive = state.timing.lastActiveDate || "";
+    if(!lastActive){ state.timing.lastActiveDate = today; return; }
+    const diffDays = Math.floor((new Date(today) - new Date(lastActive)) / 86400000);
+    if(diffDays <= 1) return;
+    if((state.progression.streakShields || 0) > 0 && !state.timing.usedShieldToday){
+      state.progression.streakShields -= 1;
+      state.timing.usedShieldToday = true;
+      showCelebration(0, "🛡️ Streak shield used! Your streak is protected.", "rare");
+    } else {
+      if((state.progression.streak || 0) > 0) state.timing.comebackReady = true;
+      state.progression.streak = 0;
+    }
+  }
+
+  function maybeAwardShield(){ if((state.progression.streak || 0) > 0 && state.progression.streak % 7 === 0){ state.progression.streakShields += 1; showCelebration(0, "🛡️ Streak shield earned for consistency!", "rare"); } }
+  function markTodayActive(){
+    const today = getTodayDateString();
+    const lastActive = state.timing.lastActiveDate || "";
+    if(lastActive === today) return;
+    if(lastActive){
+      const diffDays = Math.floor((new Date(today) - new Date(lastActive)) / 86400000);
+      if(diffDays === 1) state.progression.streak += 1;
+      else if(diffDays > 1) state.progression.streak = 1;
+    } else state.progression.streak = 1;
+    state.timing.lastActiveDate = today;
+    maybeAwardShield();
+    save();
+  }
+  function triggerComebackBoostIfNeeded(){ if(!state.timing.comebackReady) return; state.timing.comebackReady = false; state.progression.coins += 15; celebrate(15, "💥 Comeback boost! Restarting counts."); }
+
+  function beep(freq=880, duration=120, type="sine", volume=0.03){
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type; osc.frequency.value = freq; gain.gain.value = volume;
+      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + duration/1000); osc.onended = () => ctx.close();
+    } catch {}
+  }
+
+  function playRewardSound(kind="normal"){
+    const soundStyle = state.equipment.equipped.soundStyle || "classic";
+    if(soundStyle === "arcade"){
+      if(kind==="legendary"){ beep(980,100,"square",0.05); setTimeout(()=>beep(1240,100,"square",0.05),90); setTimeout(()=>beep(1480,140,"square",0.05),180); }
+      else if(kind==="rare"){ beep(880,90,"square",0.04); setTimeout(()=>beep(1180,120,"square",0.04),90); }
+      else beep(720,90,"square",0.03);
+      return;
+    }
+    if(soundStyle === "soft"){
+      if(kind==="legendary"){ beep(660,160,"sine",0.03); setTimeout(()=>beep(880,180,"sine",0.03),130); }
+      else if(kind==="rare"){ beep(620,120,"sine",0.025); }
+      else beep(540,100,"sine",0.02);
+      return;
+    }
+    if(kind==="legendary"){ beep(740,120,"triangle",0.05); setTimeout(()=>beep(1040,180,"triangle",0.05),120); setTimeout(()=>beep(1320,220,"triangle",0.05),260); }
+    else if(kind==="rare"){ beep(660,100,"sine",0.04); setTimeout(()=>beep(990,140,"sine",0.04),100); }
+    else beep(880,120,"sine",0.03);
+  }
+
+  function vibrate(kind="normal"){
+    if(!navigator.vibrate) return;
+    if(kind==="legendary") navigator.vibrate([100,50,100,50,200]);
+    else if(kind==="rare") navigator.vibrate([90,40,90]);
+    else navigator.vibrate([70]);
+  }
+
+  function launchConfetti(kind="normal"){
+    const canvas = $("#confetti"), ctx = canvas.getContext("2d");
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    const count = kind==="legendary" ? 220 : kind==="rare" ? 140 : 90;
+    const pieces = Array.from({length:count}, () => ({
+      x:Math.random()*canvas.width, y:-20-Math.random()*canvas.height*.3,
+      r:4+Math.random()*7, vx:-2+Math.random()*4, vy:2+Math.random()*5, a:Math.random()*Math.PI,
+      spin:-.2+Math.random()*.4, color:["#8b5cf6","#ec4899","#f59e0b","#38bdf8","#10b981"][Math.floor(Math.random()*5)]
+    }));
+    let frame=0;
+    (function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pieces.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.a+=p.spin; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.fillStyle=p.color; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6); ctx.restore(); });
+      frame++; if(frame<100) requestAnimationFrame(draw); else ctx.clearRect(0,0,canvas.width,canvas.height);
+    })();
+  }
+
+  function getCelebrationClassName(){ return state.equipment.equipped.celebrationStyle || "classic"; }
+  function showCelebration(amount, text, rarity="common"){
+    $("#celeXp").textContent = `+${amount} XP`;
+    $("#celeText").textContent = text;
+    $("#celeWho").textContent = `Another win for ${state.identity.name || "you"} 🎉`;
+    const badge = $("#celeBadgeWrap");
+    badge.innerHTML = "";
+    if(rarity==="rare") badge.innerHTML = `<span class="badge rare">💎 RARE</span>`;
+    if(rarity==="legendary") badge.innerHTML = `<span class="badge legendary">🌟 LEGENDARY</span>`;
+    $("#celeCard").className = `cele-card ${getCelebrationClassName()}`;
+    $("#celebrate").classList.add("show");
+    setTimeout(() => $("#celebrate").classList.remove("show"), rarity==="legendary" ? 1600 : 1000);
+  }
+
+  function unlockLoot(rarity){
+    const inv = state.equipment.inventory;
+    if(rarity === "rare"){
+      if(!inv.themes.includes("neon")) inv.themes.push("neon");
+      if(!inv.celebrationStyles.includes("neon")) inv.celebrationStyles.push("neon");
+    }
+    if(rarity === "legendary"){
+      if(!inv.modes.includes("chaos")) inv.modes.push("chaos");
+      if(!inv.celebrationStyles.includes("cosmic")) inv.celebrationStyles.push("cosmic");
+      if(!inv.soundStyles.includes("arcade")) inv.soundStyles.push("arcade");
+      if(!inv.celebrationStyles.includes("goldrush")) inv.celebrationStyles.push("goldrush");
+    }
+  }
+
+  function checkAchievements(){
+    ACHIEVEMENTS.forEach(a => {
+      if(!state.progression.achievements.includes(a.id) && a.check(state)){
+        state.progression.achievements.push(a.id);
+        state.progression.coins += 15;
+        showCelebration(20, `🏆 Achievement unlocked: ${a.name}`, "rare");
+      }
+    });
+  }
+
+  function celebrate(baseXP=10, forceText=""){
+    const mode = COMPANION_MODES[state.equipment.equipped.mode] || COMPANION_MODES.hype;
+    let rarity = "common", bonus = 0, text = forceText || mode.reward();
+    const roll = Math.random();
+    if(baseXP === state.timing.selectedTimerMinutes && !forceText){ text = `Ta-da! ${state.timing.selectedTimerMinutes}-minute focus session complete ⏱️`; }
+    if(roll < 0.05){ rarity="legendary"; bonus=50; text = forceText || "🌟 LEGENDARY DROP!"; }
+    else if(roll < 0.18){ rarity="rare"; bonus=20; text = forceText || "💎 Rare drop!"; }
+    else if(roll < 0.38){ rarity="uncommon"; bonus=10; text = forceText || "✨ Bonus reward!"; }
+    const total = baseXP + bonus;
+    state.progression.xp += total;
+    state.progression.todayXP[todayKey()] = (state.progression.todayXP[todayKey()] || 0) + total;
+    unlockLoot(rarity);
+    playRewardSound(rarity==="legendary" ? "legendary" : rarity==="rare" ? "rare" : "normal");
+    vibrate(rarity==="legendary" ? "legendary" : rarity==="rare" ? "rare" : "normal");
+    launchConfetti(rarity==="legendary" ? "legendary" : rarity==="rare" ? "rare" : "normal");
+    showCelebration(total, text, rarity);
+    checkAchievements();
+    save();
+  }
+
+  function maybeAwardPrepCombo(){
+    const prep = state.progression.prepChain;
+    if(prep.selectedTimer && prep.openedWorldToday && prep.createdTaskToday && !prep.comboAwarded){
+      prep.comboAwarded = true;
+      celebrate(10, "🧬 Prep combo complete! You set yourself up beautifully.");
+      save();
+    }
+  }
+
+  function awardPrepReward(type){
+    const prep = state.progression.prepChain;
+    if(type==="timer" && !prep.selectedTimer){ prep.selectedTimer = true; celebrate(2, "🛠️ Prep reward: focus time chosen!"); }
+    if(type==="world" && !prep.openedWorldToday){ prep.openedWorldToday = true; celebrate(2, "🗺️ Prep reward: world selected!"); }
+    if(type==="task" && !prep.createdTaskToday){ prep.createdTaskToday = true; celebrate(3, "📝 Prep reward: task prepared!"); }
+    maybeAwardPrepCombo();
+    save();
+  }
+
+  function maybeTriggerChaosBonus(worldKey){
+    let bonus = 0, message = "";
+    const neglected = getNeglectedWorld();
+    if(state.identity.badDayMode){ bonus += 10; message = "💛 Chaos bonus: you showed up on a hard day!"; }
+    if(neglected && neglected.key === worldKey){ bonus += 12; message = "👀 Chaos bonus: you revived a neglected world!"; }
+    if(state.timing.comebackReady){ bonus += 15; message = "💥 Chaos bonus: comeback energy!"; }
+    const completed = totalCompletedTasks(), open = getIncompleteTasks().length;
+    if(open > completed){ bonus += 8; message = "⚡ Chaos bonus: momentum regained!"; }
+    if(bonus > 0){ state.progression.chaosMeter += bonus; celebrate(bonus, message || "⚡ Chaos bonus!"); }
+  }
+
+  function saveTaskAsRecurringTemplate(task){
+    const exists = (state.recurring.tasks || []).some(t => t.text === task.text && t.world === task.world);
+    if(exists) return;
+    state.recurring.tasks.push({ id: makeId("rt"), text: task.text, world: task.world, linkedShortGoalId: task.linkedShortGoalId || null, linkedQuestId: task.linkedQuestId || null, frequency: "daily", active: true });
+    save();
+  }
+
+  function regenerateDailyRecurringItems(){
+    (state.recurring.tasks || []).filter(t => t.active && t.frequency === "daily").forEach(template => {
+      state.tasks.byWorld[template.world] = state.tasks.byWorld[template.world] || [];
+      const exists = state.tasks.byWorld[template.world].some(task => !task.done && task.text === template.text && task.linkedShortGoalId === template.linkedShortGoalId);
+      if(!exists){
+        state.tasks.byWorld[template.world].push({ id: Date.now() + Math.random(), text: template.text, world: template.world, linkedQuestId: template.linkedQuestId || null, linkedShortGoalId: template.linkedShortGoalId || null, done: false });
+      }
+    });
+    (state.recurring.quests || []).filter(q => q.active && q.frequency === "daily").forEach(template => {
+      const exists = (state.quests.daily || []).some(q => q.title === template.title && !q.done);
+      if(!exists){
+        state.quests.daily.push({ id: makeId("dq"), title: template.title, linkedShortGoalId: template.linkedShortGoalId || null, done:false, rewardXP:template.rewardXP, rewardCoins:template.rewardCoins, current:0, target:template.target });
+      }
+    });
+  }
+
+  function updateShortGoalProgressFromQuests(shortGoalId){
+    const goal = getShortGoalById(shortGoalId);
+    if(!goal) return;
+    const linkedQuests = getAllQuests().filter(q => q.linkedShortGoalId === shortGoalId);
+    if(!linkedQuests.length) return;
+    const completed = linkedQuests.filter(q => q.done).length;
+    goal.progress = clamp(Math.round((completed / linkedQuests.length) * 100), 0, 100);
+    if(goal.progress >= 100 && goal.status !== "complete"){ goal.status = "complete"; celebrate(50, `🏁 Short-Term Goal Complete: ${goal.title}`); }
+    if(goal.longGoalId) updateLongGoalProgressFromShortGoals(goal.longGoalId);
+  }
+
+  function updateLongGoalProgressFromShortGoals(longGoalId){
+    const goal = getLongGoalById(longGoalId);
+    if(!goal) return;
+    const children = getShortGoalsForLongGoal(longGoalId);
+    if(!children.length) return;
+    goal.progress = Math.round(children.reduce((sum, g) => sum + (g.progress || 0), 0) / children.length);
+    if(goal.progress >= 100) celebrate(100, `🌟 Long-Term Goal Complete: ${goal.title}`);
+  }
+
+  function incrementQuestProgress(questId, amount=1){
+    const quest = findQuestById(questId);
+    if(!quest || quest.done) return;
+    quest.current = (quest.current || 0) + amount;
+    if(quest.current >= quest.target){
+      quest.current = quest.target;
+      quest.done = true;
+      state.progression.coins += quest.rewardCoins || 0;
+      celebrate(quest.rewardXP || 20, `🎯 Quest Complete: ${quest.title}`);
+      if(quest.linkedShortGoalId) updateShortGoalProgressFromQuests(quest.linkedShortGoalId);
+    }
+  }
+
+  function showLootBoxMoment(rewardText, coinReward, rarity){
+    const overlay = document.getElementById("lootOverlay");
+    const box = document.getElementById("lootBox");
+    const icon = document.getElementById("lootIcon");
+    const sub = document.getElementById("lootSub");
+    const reward = document.getElementById("lootReward");
+
+    icon.textContent = rarity === "legendary" ? "🌟" : rarity === "rare" ? "💎" : "🎁";
+    sub.textContent = rarity === "legendary" ? "Legendary energy unlocked" : rarity === "rare" ? "Rare reward found" : "Daily momentum reward";
+    reward.textContent = `${rewardText} • +${coinReward} coins`;
+
+    box.classList.remove("opening");
+    void box.offsetWidth;
+    box.classList.add("opening");
+    overlay.classList.add("show");
+
+    setTimeout(() => {
+      overlay.classList.remove("show");
+    }, 1450);
+  }
+
+  function openDailyBox(){
+    const now = Date.now();
+    if(now - (state.timing.lastReward || 0) < 24*60*60*1000){ celebrate(0, "⏳ Come back tomorrow for another reward!"); return; }
+    state.timing.lastReward = now;
+    const roll = Math.random();
+    let rewardText = "", coinReward = 0, rarity = "common";
+    if(roll < 0.05){ rewardText = "LEGENDARY BOX"; coinReward = 100; rarity = "legendary"; unlockLoot("legendary"); }
+    else if(roll < 0.25){ rewardText = "Rare reward"; coinReward = 50; rarity = "rare"; unlockLoot("rare"); }
+    else { rewardText = "Daily reward"; coinReward = 20; rarity = "common"; }
+
+    showLootBoxMoment(rewardText, coinReward, rarity);
+
+    setTimeout(() => {
+      state.progression.coins += coinReward;
+      celebrate(coinReward, rarity === "legendary" ? "🌟 LEGENDARY BOX!" : rarity === "rare" ? "💎 Rare reward!" : "✨ Daily reward!");
+      save();
+      render();
+    }, 950);
+  }
+
+  function animateCoinDeduction(triggerEl){
+    try{
+      const start = triggerEl.getBoundingClientRect();
+      const tabs = document.getElementById("tabs");
+      const target = tabs ? tabs.getBoundingClientRect() : {left: window.innerWidth - 40, top: 20, width: 20, height: 20};
+      const coin = document.createElement("div");
+      coin.className = "coin-fly";
+      coin.textContent = "🪙";
+      coin.style.left = (start.left + start.width/2) + "px";
+      coin.style.top = (start.top + start.height/2) + "px";
+      coin.style.setProperty("--dx", ((target.left + target.width - 20) - (start.left + start.width/2)) + "px");
+      coin.style.setProperty("--dy", ((target.top + 10) - (start.top + start.height/2)) + "px");
+      document.body.appendChild(coin);
+      setTimeout(() => coin.remove(), 950);
+    } catch(e){}
+  }
+
+
+  function animateCoinCount(){
+    try{
+      const gearTab = Array.from(document.querySelectorAll("[data-tab]")).find(btn => (btn.dataset.tab || "") === "inventory");
+      if(gearTab){
+        gearTab.classList.remove("coin-count-pop");
+        void gearTab.offsetWidth;
+        gearTab.classList.add("coin-count-pop");
+        setTimeout(() => gearTab.classList.remove("coin-count-pop"), 750);
+      }
+    } catch(e){}
+  }
+
+  function showPurchasedBurst(triggerEl, text){
+    try{
+      const rect = triggerEl.getBoundingClientRect();
+      const burst = document.createElement("div");
+      burst.className = "purchased-burst";
+      burst.textContent = text || "Purchased!";
+      burst.style.left = (rect.left + rect.width/2) + "px";
+      burst.style.top = (rect.top - 2) + "px";
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 1000);
+    } catch(e){}
+  }
+
+  function buy(itemId, triggerEl){
+    const item = SHOP.find(i => i.id === itemId);
+    if(!item) return;
+    if(item.kind === "theme" && !isPremiumUser()){ openPaywall("premium-themes"); return; }
+    if(state.progression.coins < item.cost){ celebrate(0, "❌ Not enough coins!"); return; }
+
+    if(triggerEl){
+      triggerEl.classList.remove("pressed");
+      void triggerEl.offsetWidth;
+      triggerEl.classList.add("pressed");
+      animateCoinDeduction(triggerEl);
+      showPurchasedBurst(triggerEl, "Purchased!");
+      setTimeout(() => triggerEl.classList.remove("pressed"), 600);
+    }
+
+    state.progression.coins -= item.cost;
+    animateCoinCount();
+
+    if(item.kind === "theme"){ if(!state.equipment.inventory.themes.includes(item.value)) state.equipment.inventory.themes.push(item.value); state.equipment.equipped.theme = item.value; }
+    else if(item.kind === "mode"){ if(!state.equipment.inventory.modes.includes(item.value)) state.equipment.inventory.modes.push(item.value); state.equipment.equipped.mode = item.value; state.identity.companionMode = item.value; }
+    else if(item.kind === "celebrationStyle"){ if(!state.equipment.inventory.celebrationStyles.includes(item.value)) state.equipment.inventory.celebrationStyles.push(item.value); state.equipment.equipped.celebrationStyle = item.value; }
+    else if(item.kind === "soundStyle"){ if(!state.equipment.inventory.soundStyles.includes(item.value)) state.equipment.inventory.soundStyles.push(item.value); state.equipment.equipped.soundStyle = item.value; }
+
+    celebrate(0, `🛒 Purchased ${item.name}!`);
+  }
+
+  function addLongGoal(){
+    const title = $("#longGoalTitle").value.trim();
+    const world = $("#longGoalWorld").value;
+    const why = $("#longGoalWhy").value.trim();
+    const targetDate = $("#longGoalDate").value;
+    if(!title || !world) return;
+    state.goals.longGoals.push({ id: makeId("lg"), title, world, why: why || "Because it matters", targetDate: targetDate || "", progress: 0 });
+    $("#longGoalTitle").value = ""; $("#longGoalWhy").value = ""; $("#longGoalDate").value = "";
+    celebrate(5, "🌟 Long-term goal created!");
+  }
+
+  function addShortGoal(){
+    const title = $("#shortGoalTitle").value.trim();
+    const longGoalId = $("#shortGoalParent").value;
+    const dueDate = $("#shortGoalDate").value;
+    if(!title || !longGoalId) return;
+    state.goals.shortGoals.push({ id: makeId("sg"), longGoalId, title, dueDate: dueDate || "", progress: 0, status: "active" });
+    $("#shortGoalTitle").value = ""; $("#shortGoalDate").value = "";
+    celebrate(5, "🎯 Short-term goal created!");
+  }
+
+  function addLinkedTask(){
+    const text = $("#linkedTaskText").value.trim();
+    const world = $("#linkedTaskWorld").value;
+    const linkedShortGoalId = $("#linkedTaskShortGoal").value || null;
+    const linkedQuestId = $("#linkedTaskQuest").value || null;
+    if(!text || !world) return;
+    state.tasks.byWorld[world] = state.tasks.byWorld[world] || [];
+    state.tasks.byWorld[world].push({ id: Date.now()+Math.random(), text, world, linkedQuestId, linkedShortGoalId, done:false });
+    $("#linkedTaskText").value = "";
+    awardPrepReward("task");
+    celebrate(3, "✅ Linked task created!");
+  }
+
+  function addWorldTask(prefillText){
+    const world = state.worlds.activeWorld;
+    const text = String(prefillText != null ? prefillText : ($("#taskInput").value || "")).trim();
+    if(!text){
+      showCelebration(0, "Add a task first so we can lock in the win.", "common");
+      return;
+    }
+    state.tasks.byWorld[world] = state.tasks.byWorld[world] || [];
+    state.tasks.byWorld[world].push({ id: Date.now()+Math.random(), text, world, linkedQuestId:null, linkedShortGoalId:null, done:false });
+    if($("#taskInput")) $("#taskInput").value = "";
+    awardPrepReward("task");
+    celebrate(2, "📝 Task added!");
+    render();
+  }
+
+  function addTemplateTask(template){
+    addWorldTask(template);
+  }
+
+  function deleteLongGoal(id){
+    state.goals.longGoals = state.goals.longGoals.filter(g => g.id !== id);
+    const removedShortIds = state.goals.shortGoals.filter(g => g.longGoalId === id).map(g => g.id);
+    state.goals.shortGoals = state.goals.shortGoals.filter(g => g.longGoalId !== id);
+    getAllQuests().forEach(q => { if(removedShortIds.includes(q.linkedShortGoalId)) q.linkedShortGoalId = null; });
+    Object.keys(state.tasks.byWorld || {}).forEach(world => { state.tasks.byWorld[world] = state.tasks.byWorld[world].map(t => { if(removedShortIds.includes(t.linkedShortGoalId)) t.linkedShortGoalId = null; return t; }); });
+    save(); render();
+  }
+
+  function deleteShortGoal(id){
+    state.goals.shortGoals = state.goals.shortGoals.filter(g => g.id !== id);
+    getAllQuests().forEach(q => { if(q.linkedShortGoalId === id) q.linkedShortGoalId = null; });
+    Object.keys(state.tasks.byWorld || {}).forEach(world => { state.tasks.byWorld[world] = state.tasks.byWorld[world].map(t => { if(t.linkedShortGoalId === id) t.linkedShortGoalId = null; return t; }); });
+    save(); render();
+  }
+
+  function deleteTask(world, id){ state.tasks.byWorld[world] = (state.tasks.byWorld[world] || []).filter(t => t.id !== id); save(); render(); }
+
+  function addImportantDate(){
+    const title = ($("#importantDateTitle").value || "").trim();
+    const date = $("#importantDateDate").value;
+    const notes = ($("#importantDateNotes").value || "").trim();
+    if(!title || !date) return;
+    state.reminders.importantDates = state.reminders.importantDates || [];
+    state.reminders.importantDates.push({ id: Date.now()+Math.random(), title, date, notes });
+    $("#importantDateTitle").value = ""; $("#importantDateDate").value = ""; $("#importantDateNotes").value = "";
+    celebrate(3, "📅 Important date added!");
+  }
+
+  function deleteImportantDate(id){
+    state.reminders.importantDates = (state.reminders.importantDates || []).filter(d => String(d.id) !== String(id));
+    save(); render();
+  }
+
+  function startEditImportantDate(id){
+    state.ui.editing = state.ui.editing || {};
+    state.ui.editing.importantDateId = id;
+    save(); render();
+  }
+
+  function saveImportantDateEdit(id){
+    const item = (state.reminders.importantDates || []).find(d => String(d.id) === String(id));
+    if(!item) return;
+    item.title = ($("#editImportantDateTitle").value || "").trim() || item.title;
+    item.date = $("#editImportantDateDate").value || item.date;
+    item.notes = ($("#editImportantDateNotes").value || "").trim();
+    state.ui.editing.importantDateId = null;
+    celebrate(2, "📆 Date updated!");
+  }
+  function startEditLongGoal(id){ state.ui.editing.longGoalId = id; save(); render(); }
+  function startEditShortGoal(id){ state.ui.editing.shortGoalId = id; save(); render(); }
+  function startEditTask(world, id){ state.ui.editing.taskId = id; state.ui.editing.taskWorld = world; save(); render(); }
+  function clearEditing(){ state.ui.editing = { longGoalId:null, shortGoalId:null, taskId:null, taskWorld:null, importantDateId:null }; save(); render(); }
+
+  function saveLongGoalEdit(id){
+    const goal = getLongGoalById(id); if(!goal) return;
+    goal.title = $("#editLongGoalTitle").value.trim() || goal.title;
+    goal.why = $("#editLongGoalWhy").value.trim() || goal.why;
+    goal.targetDate = $("#editLongGoalDate").value || goal.targetDate;
+    goal.world = $("#editLongGoalWorld").value || goal.world;
+    clearEditing(); celebrate(3, "✏️ Long-term goal updated!");
+  }
+
+  function saveShortGoalEdit(id){
+    const goal = getShortGoalById(id); if(!goal) return;
+    goal.title = $("#editShortGoalTitle").value.trim() || goal.title;
+    goal.dueDate = $("#editShortGoalDate").value || goal.dueDate;
+    goal.status = $("#editShortGoalStatus").value || goal.status;
+    clearEditing(); celebrate(3, "✏️ Short-term goal updated!");
+  }
+
+  function saveTaskEdit(world, id){
+    const task = (state.tasks.byWorld[world] || []).find(t => t.id === id); if(!task) return;
+    task.text = $("#editTaskText").value.trim() || task.text;
+    task.linkedShortGoalId = $("#editTaskShortGoal").value || null;
+    task.linkedQuestId = $("#editTaskQuest").value || null;
+    clearEditing(); celebrate(2, "✏️ Task updated!");
+  }
+
+  function setView(v){ state.ui.view = v; save(); render(); }
+  function toggleBadDayMode(){ state.identity.badDayMode = !state.identity.badDayMode; save(); render(); }
+
+  function setWorld(key){
+    state.worlds.activeWorld = key;
+    state.ui.view = "world";
+    awardPrepReward("world");
+    save(); render();
+  }
+
+  function setFocusTime(minutes){
+    state.timing.selectedTimerMinutes = minutes;
+    state.timing.timerSeconds = minutes * 60;
+    state.timing.timerRunning = false;
+    state.timing.timerEndAt = null;
+    state.aiProfile.favoriteTimer = minutes;
+    awardPrepReward("timer");
+    save(); render();
+  }
+
+  function startTimer(){
+    if(state.timing.timerRunning) return;
+    state.timing.timerRunning = true;
+    state.timing.timerEndAt = Date.now() + (state.timing.timerSeconds * 1000);
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(tickTimer, 250);
+    save(); render();
+  }
+
+  function pauseTimer(){
+    if(!state.timing.timerRunning) return;
+    state.timing.timerSeconds = Math.max(0, Math.ceil((state.timing.timerEndAt - Date.now())/1000));
+    state.timing.timerRunning = false;
+    state.timing.timerEndAt = null;
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = null;
+    save(); render();
+  }
+
+  function resetTimer(){
+    state.timing.timerSeconds = state.timing.selectedTimerMinutes * 60;
+    state.timing.timerRunning = false;
+    state.timing.timerEndAt = null;
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = null;
+    save(); render();
+  }
+
+  function tickTimer(){
+    if(state.timing.timerRunning && state.timing.timerEndAt){
+      const remain = Math.max(0, Math.ceil((state.timing.timerEndAt - Date.now())/1000));
+      state.timing.timerSeconds = remain;
+      if(remain <= 0){
+        state.timing.timerRunning = false;
+        state.timing.timerEndAt = null;
+        if(timerInterval) clearInterval(timerInterval);
+        timerInterval = null;
+        celebrate(state.timing.selectedTimerMinutes, `⏱️ ${state.timing.selectedTimerMinutes}-minute focus session complete!`);
+        markTodayActive(); triggerComebackBoostIfNeeded();
+        (state.quests.focus || []).forEach(q => { if(!q.done) incrementQuestProgress(q.id, 1); });
+        maybeTriggerChaosBonus(state.worlds.activeWorld);
+      }
+      save(); render();
+    }
+  }
+
+  function completeTask(id, forcedWorld=null){
+    const worldKey = forcedWorld || state.worlds.activeWorld;
+    state.tasks.byWorld[worldKey] = (state.tasks.byWorld[worldKey] || []).map(task => {
+      if(task.id === id && !task.done){
+        task.done = true;
+        state.worlds.worldActivity[worldKey] = Date.now();
+        recordWin(task, worldKey);
+        celebrate(10, "✅ Task complete!");
+        setTimeout(() => {
+          const shouldShare = window.confirm("✨ You did that. Want to show off your win?");
+          if(shouldShare) shareDailyWins();
+        }, 900);
+        markTodayActive(); triggerComebackBoostIfNeeded();
+        if(task.linkedQuestId) incrementQuestProgress(task.linkedQuestId, 1);
+        if(task.linkedShortGoalId) updateShortGoalProgressFromQuests(task.linkedShortGoalId);
+        maybeTriggerChaosBonus(worldKey);
+        state.aiProfile.preferredWorld = worldKey;
+        if(!state.recurring.tasks.some(t => t.text === task.text && t.world === task.world)) saveTaskAsRecurringTemplate(task);
+      }
+      return task;
+    });
+    save(); render();
+  }
+
+  function recordWin(task, worldKey){
+    const log = getWinLog();
+    log.unshift({
+      id: makeId('win'),
+      title: task.text,
+      world: worldKey,
+      createdAt: Date.now(),
+      image: '',
+      note: '',
+      taskId: task.id
+    });
+  }
+
+  function updateProfilePhoto(dataUrl){ state.profile = state.profile || {}; state.profile.photo = dataUrl; save(); render(); }
+  function updateWinImage(winId, dataUrl){ const win = getWinLog().find(w=>w.id===winId); if(!win) return; win.image = dataUrl; save(); render(); }
+  function updateWinNote(winId, note){ const win = getWinLog().find(w=>w.id===winId); if(!win) return; win.note = note; save(); }
+  function formatTime(total){ const m = String(Math.floor(total / 60)).padStart(2,"0"); const s = String(total % 60).padStart(2,"0"); return `${m}:${s}`; }
+  function maybeApplyTheme(){ document.body.classList.toggle("theme-neon", state.equipment.equipped.theme === "neon"); }
+
+  function equip(kind, value){
+    if(kind === "theme" && value !== "default" && requirePremium("premium-themes")) return;
+    if(kind === "theme"){ state.equipment.equipped.theme = value; }
+    else if(kind === "mode"){ state.equipment.equipped.mode = value; state.identity.companionMode = value; }
+    else if(kind === "celebrationStyle"){ state.equipment.equipped.celebrationStyle = value; }
+    else if(kind === "soundStyle"){ state.equipment.equipped.soundStyle = value; }
+    else if(kind === "sound"){ state.equipment.equipped.sound = value; }
+    celebrate(0, `⚙️ Equipped ${STYLE_LABELS[value] || value}!`);
+  }
+
+  function getAdaptiveSuggestion(){
+    const name = state.identity.name || "You";
+    const activeShortGoal = getActiveShortGoal();
+    const neglected = getNeglectedWorld();
+    const preferredTimer = state.aiProfile.favoriteTimer || 25;
+    const priorityTask = getTodayPriorityTasks()[0];
+    let message = "", type = "general", world = state.worlds.activeWorld;
+    if(state.identity.badDayMode && !state.progression.prepChain.createdTaskToday){
+      message = `${name}, let’s keep it tiny. Prep one task and that already counts 💛`; type = "prep";
+    } else if(state.progression.chaosMeter >= 20){
+      message = `${name}, you’re turning chaos into momentum. That counts in a big way ⚡`; type = "recovery";
+    } else if(priorityTask && activeShortGoal){
+      message = `${name}, "${priorityTask.text}" moves "${activeShortGoal.title}" forward.`; type = "linked_task"; world = priorityTask.world;
+    } else if(neglected){
+      message = `${name}, ${neglected.name} has been quiet lately. A ${preferredTimer}-minute reset there could restore balance.`; type = "neglected_world"; world = neglected.key;
+    } else if(state.progression.prepChain.selectedTimer && !state.timing.timerRunning){
+      message = `${name}, your focus session is ready. You already did the hard part: starting ✨`; type = "start_timer";
+    } else {
+      const mode = COMPANION_MODES[state.equipment.equipped.mode] || COMPANION_MODES.hype;
+      message = mode.greeting(name, worldByKey(state.worlds.activeWorld));
+    }
+    state.aiProfile.lastSuggestion = message;
+    return { message, type, world };
+  }
+
+  function getAIMessage(){ return getAdaptiveSuggestion().message; }
+
+
+  function renderAuthView(){
+    return `<div class="auth-shell"><div class="auth-grid">
+      <div class="auth-hero card-strong">
+        <div class="hero-badge">✨ Ta-da Elite • Life's a game. Let's win it!</div>
+        <h1 style="font-size:3rem;margin-top:18px;">Start winning daily.</h1>
+        <div class="big" style="font-size:1.2rem;margin-top:8px;">Free to start. Premium when you’re ready.</div>
+        <div class="muted" style="margin-top:12px;max-width:48ch;">Create wins, build streaks, and turn your life into a game you can actually win. Start free, then unlock your full potential when you want photos, themes, and full history.</div>
+        <div class="feature-checks">
+          <div class="feature-check">✅ Free: tasks, wins, streaks, default theme</div>
+          <div class="feature-check">🚀 Premium: photos, premium themes, full history</div>
+          <div class="feature-check">🏆 Momentum-first design that keeps you coming back</div>
+        </div>
+      </div>
+      <div class="auth-form">
+        <div class="label">Create your local account</div>
+        <div class="big" style="margin-top:8px;">Let’s get you in the game</div>
+        <div class="muted" style="margin-top:8px;">This login is saved on this device so you can test and launch immediately.</div>
+        <div style="display:grid;gap:10px;margin-top:18px;">
+          <input id="authName" placeholder="Your name" value="${escapeAttr(state.identity.name || "")}" />
+          <input id="authEmail" placeholder="Email" type="email" value="${escapeAttr(state.auth && state.auth.email || "")}" />
+          <input id="authPassword" placeholder="Password" type="password" value="${escapeAttr(state.auth && state.auth.password || "")}" />
+          <button id="authContinueBtn">Continue</button>
+        </div>
+        <div class="muted" style="margin-top:12px;font-size:.85rem;">This version uses a device-based account so you can move fast on Vercel right now.</div>
+      </div>
+    </div></div>`;
+  }
+
+  function renderAccountView(){
+    const memberSince = state.auth.memberSince ? new Date(state.auth.memberSince).toLocaleDateString() : "Today";
+    return `<div class="card card-strong premium-hero">
+      <div class="row between wrap">
+        <div>
+          <div class="label">Account</div>
+          <div class="big" style="margin-top:6px;">${escapeHtml(state.identity.name || "Player One")}</div>
+          <div class="muted" style="margin-top:4px;">${escapeHtml(state.auth.email || "No email added")}</div>
+        </div>
+        <div>${planBadge()}</div>
+      </div>
+      <div class="account-grid" style="margin-top:14px;">
+        <div class="account-stat"><div class="n">${totalCompletedTasks()}</div><div class="muted">Total Wins</div></div>
+        <div class="account-stat"><div class="n">${state.progression.streak || 0}</div><div class="muted">Current Streak</div></div>
+        <div class="account-stat"><div class="n">${state.progression.xp || 0}</div><div class="muted">Lifetime XP</div></div>
+        <div class="account-stat"><div class="n">${escapeHtml(memberSince)}</div><div class="muted">Member Since</div></div>
+      </div>
+      <div class="subtle-divider"></div>
+      <div class="row between wrap">
+        <div>
+          <div class="section-title">Plan</div>
+          <div class="muted">${isPremiumUser() ? "You have access to premium photos, premium themes, and your full win history." : "You’re on the free plan with basic tasks, wins, streaks, and the default theme."}</div>
+        </div>
+        ${isPremiumUser() ? `<button class="secondary" id="managePlanBtn">Refresh Plan</button>` : `<button id="openUpgradeFromAccountBtn">Unlock Your Full Potential</button>`}
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="section-title">Premium Access</div>
+        <div class="muted">Redeem a business-issued access code here, or use Refresh Plan after Stripe checkout.</div>
+        <div class="row" style="margin-top:10px;">
+          <input id="accountUnlockCode" placeholder="Enter access code" autocomplete="one-time-code" />
+          <button id="accountUnlockBtn" class="secondary">Redeem</button>
+        </div>
+      </div>
+      <div class="row wrap" style="margin-top:14px;">
+        <button class="secondary" id="signOutBtn">Sign out</button>
+      </div>
+    </div>`;
+  }
+
+  function renderTabs(){
+    const items = [
+      { key:"today", label:"☀️ Today" },
+      { key:"profile", label:"👤 My Game" },
+      { key:"map", label:"🗺️ Map" },
+      { key:"world", label:"🌍 World" },
+      { key:"goals", label:"🎯 Goals" },
+      { key:"inventory", label:"🎒 Gear" },
+      { key:"wins", label:"✨ Wins" },
+      { key:"account", label:"🔐 Account" }
+    ];
+    $("#tabs").innerHTML = items.map(t => `<button class="${state.ui.view === t.key ? 'active' : 'secondary'}" data-tab="${t.key}">${t.label}</button>`).join("");
+  }
+
+  function renderBadDayModeCard(){
+    return `<div class="card"><div class="row between"><div><div class="section-title">💛 Bad Day Mode</div><div class="muted">Simplify the app and make today feel doable</div></div><button class="${state.identity.badDayMode ? 'active' : 'secondary'}" id="toggleBadDayModeBtn">${state.identity.badDayMode ? "On" : "Off"}</button></div></div>`;
+  }
+
+  function renderStreakProtectionCard(){
+    return `<div class="card"><div class="section-title">🔥 Streak Protection</div><div class="row wrap"><div class="pill" style="flex:1"><div class="n">${state.progression.streak || 0}</div><div class="muted">Current Streak</div></div><div class="pill" style="flex:1"><div class="n">${state.progression.streakShields || 0}</div><div class="muted">Shields 🛡️</div></div></div>${state.timing.comebackReady ? `<div class="alert-line" style="margin-top:12px;">💛 You can still restart strong today. One win brings momentum back.</div>` : `<div class="muted" style="margin-top:12px;">Protect your streak, and if life happens, Ta-da helps you come back.</div>`}</div>`;
+  }
+
+  function renderMomentumSystemsCard(){
+    const prep = state.progression.prepChain;
+    return `<div class="card"><div class="section-title">⚡ Momentum Systems</div><div class="row wrap"><div class="pill" style="flex:1"><div class="n">${prep.selectedTimer ? "✅" : "⬜"}</div><div class="muted">Timer picked</div></div><div class="pill" style="flex:1"><div class="n">${prep.openedWorldToday ? "✅" : "⬜"}</div><div class="muted">World entered</div></div><div class="pill" style="flex:1"><div class="n">${prep.createdTaskToday ? "✅" : "⬜"}</div><div class="muted">Task prepared</div></div></div><div class="alert-line" style="margin-top:12px;">⚡ Chaos Meter: <strong>${state.progression.chaosMeter || 0}</strong></div><div class="muted" style="margin-top:10px;">Ta-da rewards setup, recovery, and momentum — not just perfect performance.</div></div>`;
+  }
+
+  function renderLongGoals(){
+    return `<div class="card"><div class="section-title">🌟 Long-Term Goals</div>${(state.goals.longGoals || []).map(goal => {
+      const editing = state.ui.editing.longGoalId === goal.id;
+      return `<div class="card" style="margin:10px 0 0 0;">${editing ? `
+        <div class="row wrap">
+          <input id="editLongGoalTitle" value="${escapeAttr(goal.title)}" />
+          <select id="editLongGoalWorld">${WORLDS.map(w => `<option value="${w.key}" ${goal.world===w.key?"selected":""}>${w.name} ${w.icon}</option>`).join("")}</select>
+          <input id="editLongGoalWhy" value="${escapeAttr(goal.why || "")}" />
+          <input id="editLongGoalDate" type="date" value="${escapeAttr(goal.targetDate || "")}" />
+          <div class="row wrap"><button class="small" data-save-long-goal="${goal.id}">Save</button><button class="small secondary" id="cancelEditLongGoal">Cancel</button></div>
+        </div>` : `
+        <div class="row between"><div style="font-weight:900">${escapeHtml(goal.title)}</div><div class="row wrap"><button class="small secondary" data-edit-long-goal="${goal.id}">Edit</button><button class="small secondary" data-delete-long-goal="${goal.id}">Delete</button></div></div>
+        <div class="muted" style="margin-top:4px">${worldLabel(goal.world)} • ${escapeHtml(goal.why || "")}</div>
+        <div class="muted" style="margin-top:4px">Target: ${escapeHtml(goal.targetDate || "No date set")}</div>
+        <div class="progress"><span style="width:${goal.progress}%"></span></div>
+        <div class="muted">${goal.progress}% complete</div>`}
+      </div>`;
+    }).join("")}</div>`;
+  }
+
+  function renderShortGoals(){
+    return `<div class="card"><div class="section-title">🎯 Short-Term Goals</div>${(state.goals.shortGoals || []).map(goal => {
+      const parent = getLongGoalById(goal.longGoalId);
+      const linkedQuests = getAllQuests().filter(q => q.linkedShortGoalId === goal.id);
+      const editing = state.ui.editing.shortGoalId === goal.id;
+      return `<div class="card" style="margin:10px 0 0 0;">${editing ? `
+        <div class="row wrap">
+          <input id="editShortGoalTitle" value="${escapeAttr(goal.title)}" />
+          <input id="editShortGoalDate" type="date" value="${escapeAttr(goal.dueDate || "")}" />
+          <select id="editShortGoalStatus">
+            <option value="active" ${goal.status==="active"?"selected":""}>Active</option>
+            <option value="paused" ${goal.status==="paused"?"selected":""}>Paused</option>
+            <option value="complete" ${goal.status==="complete"?"selected":""}>Complete</option>
+          </select>
+          <div class="row wrap"><button class="small" data-save-short-goal="${goal.id}">Save</button><button class="small secondary" id="cancelEditShortGoal">Cancel</button></div>
+        </div>` : `
+        <div class="row between"><div style="font-weight:900">${escapeHtml(goal.title)}</div><div class="row wrap"><button class="small secondary" data-edit-short-goal="${goal.id}">Edit</button><button class="small secondary" data-delete-short-goal="${goal.id}">Delete</button></div></div>
+        <div class="muted" style="margin-top:4px">Linked to: ${parent ? escapeHtml(parent.title) : "No parent goal"}</div>
+        <div class="muted" style="margin-top:4px">Due: ${escapeHtml(goal.dueDate || "No due date")} • Status: ${escapeHtml(goal.status)}</div>
+        <div class="progress"><span style="width:${goal.progress}%"></span></div>
+        <div class="muted">${goal.progress}% complete</div>
+        ${linkedQuests.length ? `<div style="margin-top:10px;font-weight:900;">Supported by:</div>${linkedQuests.map(q => `<div class="muted" style="margin-top:4px">• ${escapeHtml(q.title)}</div>`).join("")}` : `<div class="muted" style="margin-top:10px">No linked quests yet</div>`}`}</div>`;
+    }).join("")}</div>`;
+  }
+
+  function renderQuestSection(title, quests){
+    return `<div style="margin-top:12px;"><div style="font-weight:900; margin-bottom:8px;">${title}</div>${quests.map(q => `<div class="card" style="margin:10px 0 0 0;"><div style="font-weight:900">${q.done ? "✅" : "⬜"} ${escapeHtml(q.title)}</div><div class="muted" style="margin-top:4px">Supports: ${escapeHtml(getQuestGoalLabel(q.linkedShortGoalId))}</div><div class="muted" style="margin-top:4px">Progress: ${q.current || 0} / ${q.target || 1}</div><div class="progress"><span style="width:${Math.round(((q.current || 0)/(q.target || 1))*100)}%"></span></div><div class="muted" style="margin-top:4px">Reward: ${q.rewardXP} XP • ${q.rewardCoins} coins</div></div>`).join("")}</div>`;
+  }
+
+  function renderQuestBoard(){
+    return `<div class="card"><div class="section-title">🎯 Quest Board</div><div class="muted">Your missions are tied to real goals</div>${renderQuestSection("🟢 Daily Quests", state.quests.daily || [])}${renderQuestSection("🔵 Focus Quests", state.quests.focus || [])}${renderQuestSection("🟣 Life Quests", state.quests.life || [])}</div>`;
+  }
+
+  function renderCreationFlow(){
+    return `<div class="card"><div class="section-title">🛠️ Build Your Goal System</div>
+      <div class="card" style="margin:10px 0 0 0;"><div style="font-weight:900; margin-bottom:8px;">🌟 Add Long-Term Goal</div><div class="row wrap"><input id="longGoalTitle" placeholder="Goal title" /><select id="longGoalWorld"><option value="">Select world</option>${WORLDS.map(w => `<option value="${w.key}">${w.name} ${w.icon}</option>`).join("")}</select><input id="longGoalWhy" placeholder="Why this matters" /><input id="longGoalDate" type="date" /><button id="addLongGoalBtn">Add Long-Term Goal</button></div></div>
+      <div class="card" style="margin:10px 0 0 0;"><div style="font-weight:900; margin-bottom:8px;">🎯 Add Short-Term Goal</div><div class="row wrap"><input id="shortGoalTitle" placeholder="Short-term milestone" /><select id="shortGoalParent">${renderLongGoalOptions()}</select><input id="shortGoalDate" type="date" /><button id="addShortGoalBtn">Add Short-Term Goal</button></div></div>
+      <div class="card" style="margin:10px 0 0 0;"><div style="font-weight:900; margin-bottom:8px;">✅ Add Linked Task</div><div class="row wrap"><input id="linkedTaskText" placeholder="Task text" /><select id="linkedTaskWorld"><option value="">Select world</option>${WORLDS.map(w => `<option value="${w.key}">${w.name} ${w.icon}</option>`).join("")}</select><select id="linkedTaskShortGoal">${renderShortGoalOptions()}</select><select id="linkedTaskQuest">${renderQuestOptions()}</select><button id="addLinkedTaskBtn">Add Linked Task</button></div></div>
+    </div>`;
+  }
+
+  function renderRecurringSystemsCard(){
+    const recurringTasks = state.recurring.tasks || [];
+    const recurringQuests = state.recurring.quests || [];
+    return `<div class="card"><div class="section-title">🔁 Recurring Systems</div><div style="font-weight:900; margin-bottom:8px;">Recurring Tasks</div>${recurringTasks.length ? recurringTasks.map(t => `<div class="alert-line"><div><div style="font-weight:900">${escapeHtml(t.text)}</div><div class="muted">${worldLabel(t.world)} • ${escapeHtml(t.frequency)}</div></div></div>`).join("") : `<div class="muted">No recurring tasks yet.</div>`}<div style="font-weight:900; margin:14px 0 8px;">Recurring Quests</div>${recurringQuests.length ? recurringQuests.map(q => `<div class="alert-line"><div><div style="font-weight:900">${escapeHtml(q.title)}</div><div class="muted">${escapeHtml(q.type)} • ${escapeHtml(q.frequency)}</div></div></div>`).join("") : `<div class="muted">No recurring quests yet.</div>`}</div>`;
+  }
+
+  function renderStyleEquipmentCard(){
+    return `<div class="card"><div class="section-title">🎆 Style Loadout</div>
+      <div style="font-weight:900; margin-bottom:8px;">Themes</div><div class="quick-list">${(state.equipment.inventory.themes || []).map(value => `<button class="small ${state.equipment.equipped.theme===value?'active':'secondary'}" data-equip="theme:${value}">${STYLE_LABELS[value] || value}</button>`).join("")}</div>
+      <div style="font-weight:900; margin:14px 0 8px;">Companion Modes</div><div class="quick-list">${(state.equipment.inventory.modes || []).map(value => `<button class="small ${state.equipment.equipped.mode===value?'active':'secondary'}" data-equip="mode:${value}">${COMPANION_MODES[value].label || value}</button>`).join("")}</div>
+      <div style="font-weight:900; margin:14px 0 8px;">Celebration Styles</div><div class="quick-list">${(state.equipment.inventory.celebrationStyles || []).map(value => `<button class="small ${state.equipment.equipped.celebrationStyle===value?'active':'secondary'}" data-equip="celebrationStyle:${value}">${STYLE_LABELS[value] || value}</button>`).join("")}</div>
+      <div style="font-weight:900; margin:14px 0 8px;">Sound Styles</div><div class="quick-list">${(state.equipment.inventory.soundStyles || []).map(value => `<button class="small ${state.equipment.equipped.soundStyle===value?'active':'secondary'}" data-equip="soundStyle:${value}">${STYLE_LABELS[value] || value}</button>`).join("")}</div>
+    </div>`;
+  }
+
+  function renderInventoryCard(){
+    return `<div class="card"><div class="section-title">🎒 Inventory</div><div class="muted">Unlocked systems, styles, and mode upgrades.</div><div class="row wrap" style="margin-top:10px"><div class="pill"><div class="n">${state.equipment.inventory.themes.length}</div><div class="muted">Themes</div></div><div class="pill"><div class="n">${state.equipment.inventory.celebrationStyles.length}</div><div class="muted">Celebrations</div></div><div class="pill"><div class="n">${state.equipment.inventory.soundStyles.length}</div><div class="muted">Sound Styles</div></div><div class="pill"><div class="n">${state.equipment.inventory.modes.length}</div><div class="muted">Modes</div></div></div></div>`;
+  }
+
+  function renderShopCard(){
+    return `<div class="card"><div class="section-title">🛒 Shop</div>${SHOP.map(item => `<div class="leader-row"><div><div style="font-weight:900">${escapeHtml(item.name)}</div><div class="muted">${item.cost} coins</div></div><button class="small" class="small shop-button" data-buy="${item.id}">Buy</button></div>`).join("")}</div>`;
+  }
+
+  function renderAchievementsCard(){
+    return `<div class="card"><div class="section-title">🏆 Achievements</div>${ACHIEVEMENTS.map(a => `<div class="alert-line"><div><div style="font-weight:900">${state.progression.achievements.includes(a.id) ? "✅" : "⬜"} ${a.name}</div><div class="muted">${a.desc}</div></div></div>`).join("")}</div>`;
+  }
+
+  function getLevelProgress(){
+    const level = Math.floor(state.progression.xp / 50) + 1;
+    const into = state.progression.xp % 50;
+    const pct = Math.round((into / 50) * 100);
+    return { level, into, pct, next: 50 - into };
+  }
+
+  function renderTodayView(){
+    const tasks = getTodayPriorityTasks();
+    const focusQuests = getTodayFocusQuests();
+    const urgentDates = getUrgentDates();
+    const activeShortGoal = getActiveShortGoal();
+    const neglected = getNeglectedWorld();
+    const intro = state.identity.badDayMode ? "Today only needs one small win. We are making this easy 💛" : escapeHtml(getAIMessage());
+    const topTask = tasks[0];
+    const levelData = getLevelProgress();
+    return `<div class="card card-strong premium-hero">
+      <div class="row between wrap">
+        <div>
+          <div class="label">Today View</div>
+          <div style="margin-top:8px;font-weight:900;font-size:1.12rem;line-height:1.28;">${intro}</div>
+          <div class="muted" style="margin-top:8px;"><span class="pulse-dot"></span>New day, new quests, new Ta-da energy ✨</div>
+        </div>
+        <button class="secondary small" id="dailyBoxBtn">🎁 Daily Box</button>
+      </div>
+      ${activeShortGoal ? `<div class="alert-line" style="margin-top:12px;"><div><div style="font-weight:900">Active milestone</div><div class="muted">${escapeHtml(activeShortGoal.title)}</div></div></div>` : ``}
+      <div class="level-banner">
+        <div>
+          <div class="label">Level Progress</div>
+          <div style="font-size:1.4rem;font-weight:900;margin-top:4px;">Level ${levelData.level}</div>
+          <div class="muted" style="margin-top:4px;">${levelData.next} XP until next level</div>
+        </div>
+        <div style="min-width:110px;text-align:right;">
+          <div style="font-size:1.2rem;font-weight:900;">${levelData.pct}%</div>
+          <div class="muted">to next</div>
+        </div>
+      </div>
+      <div class="progress" style="margin-top:10px;"><span style="width:${levelData.pct}%"></span></div>
+      <div class="metric-grid">
+        <div class="metric"><div class="n">${state.progression.todayXP[todayKey()] || 0}</div><div class="muted">XP Today</div></div>
+        <div class="metric"><div class="n">${state.progression.streak || 0}</div><div class="muted">Streak</div></div>
+        <div class="metric"><div class="n">${state.progression.coins || 0}</div><div class="muted">Coins</div></div>
+      </div>
+      <div class="flame-strip">
+        <div class="flame-box"><div class="n" style="font-weight:900;">${totalCompletedTasks()}</div><div class="muted">Total Wins</div></div>
+        <div class="flame-box"><div class="n" style="font-weight:900;">${focusQuests.length}</div><div class="muted">Focus Quests</div></div>
+      </div>
+    </div>
+      ${renderBadDayModeCard()}
+      <div class="card spotlight-card">
+        <div class="row between wrap">
+          <div>
+            <div class="label">Best Next Move</div>
+            <div style="margin-top:8px;font-size:1.05rem;font-weight:900;">
+              ${topTask ? escapeHtml(topTask.text) : "Take one tiny step and keep the chain alive."}
+            </div>
+            <div class="muted" style="margin-top:6px;">
+              ${topTask ? `${worldLabel(topTask.world)}${topTask.linkedShortGoalId ? " • moves a goal forward" : ""}${topTask.linkedQuestId ? " • feeds a quest" : ""}` : "Momentum beats perfection."}
+            </div>
+          </div>
+          ${topTask ? `<button class="small" data-complete-today="${topTask.id}" data-world="${topTask.world}">Complete Now</button>` : `<button class="small secondary" data-tab="map">Open Map</button>`}
+        </div>
+      </div>
+      ${renderMomentumSystemsCard()}
+      ${renderStreakProtectionCard()}
+      <div class="card">
+        <div class="row between wrap">
+          <div class="section-title" style="margin:0;">⚡ Today’s Best Next Moves</div>
+          <div class="muted">${tasks.length} queued</div>
+        </div>
+        <div class="subtle-divider"></div>
+        ${tasks.length ? tasks.map(task => `<div class="task"><div><div>${escapeHtml(task.text)}</div><div class="muted" style="font-size:.82rem;">${worldLabel(task.world)}${task.linkedQuestId ? " • 🎯 linked quest" : ""}${task.linkedShortGoalId ? " • 🌱 linked goal" : ""}</div></div><button class="small" data-complete-today="${task.id}" data-world="${task.world}">Done</button></div>`).join("") : `<div class="muted">No open tasks. Suspiciously iconic.</div>`}
+      </div>
+      <div class="card">
+        <div class="row between wrap">
+          <div class="section-title" style="margin:0;">🔵 Focus Quests</div>
+          <div class="muted">${focusQuests.length} active</div>
+        </div>
+        <div class="subtle-divider"></div>
+        ${focusQuests.length ? focusQuests.map(q => `<div class="card" style="margin:10px 0 0 0;"><div style="font-weight:900">${escapeHtml(q.title)}</div><div class="muted" style="margin-top:4px">Progress: ${q.current || 0} / ${q.target || 1}</div><div class="progress"><span style="width:${Math.round(((q.current || 0)/(q.target || 1))*100)}%"></span></div></div>`).join("") : `<div class="muted">No open focus quests. Big win energy.</div>`}
+      </div>
+      ${!state.identity.badDayMode ? `<div class="card"><div class="section-title">📅 Coming Up</div>${urgentDates.length ? urgentDates.map(d => `<div class="alert-line"><div><div style="font-weight:900">${escapeHtml(d.title)}</div><div class="muted">${d.daysAway===0 ? "Today" : d.daysAway===1 ? "Tomorrow" : `In ${d.daysAway} days`} • ${escapeHtml(d.date)}</div>${d.notes ? `<div class="muted" style="margin-top:4px;font-size:.85rem;">${escapeHtml(d.notes)}</div>` : ``}</div></div>`).join("") : `<div class="muted">Nothing urgent in the next 3 days.</div>`}</div><div class="card"><div class="section-title">👀 Attention Check</div><div class="alert-line"><div>${neglected ? `${escapeHtml(state.identity.name || "Hey")}, ${neglected.icon} ${escapeHtml(neglected.name)} has been quiet lately.` : "All worlds have some recent love. Gorgeous."}</div></div></div>` : `<div class="card center"><div class="section-title">🌱 Gentle Goal</div><div class="muted">Pick one task, one timer, or one tiny reset. That is enough today.</div></div>`}
+      <div class="card center">
+        <div class="section-title">🎁 Daily Reward Moment</div>
+        <div class="muted">Open your reward box and keep the streak magic alive.</div>
+        <div style="margin-top:12px"><button id="dailyBoxBtnBottom">Open Daily Box</button></div>
+      </div>`;
+  }
+
+  function renderMapView(){
+    const suggestion = getAdaptiveSuggestion();
+    return `<div class="card card-strong center premium-hero"><div class="label">Adaptive AI Companion</div><div style="margin-top:10px"><input id="nameInput" placeholder="Your name" value="${escapeAttr(state.identity.name)}" /></div><div style="margin-top:12px;font-weight:900;font-size:1.05rem;">${escapeHtml(suggestion.message)}</div><div class="muted" style="margin-top:8px;font-weight:800">${COMPANION_MODES[state.equipment.equipped.mode]?.label || "Companion"}</div></div>${renderBadDayModeCard()}<div class="card center"><div class="section-title">🎮 Dashboard</div><div class="stats"><div class="pill"><div class="n">${Math.floor(state.progression.xp/50)+1}</div><div class="muted">Level</div></div><div class="pill"><div class="n">${state.progression.xp}</div><div class="muted">XP</div></div><div class="pill"><div class="n">${state.progression.coins}</div><div class="muted">Coins</div></div><div class="pill"><div class="n">${totalCompletedTasks()}</div><div class="muted">Wins ✅</div></div></div></div><div class="card"><div class="section-title">🗺️ Life Map</div><div class="map-grid">${WORLDS.map(w => { const list = state.tasks.byWorld[w.key] || []; const wins = list.filter(t => t.done).length; const progress = Math.min(100, wins * 15); return `<div class="world-node" data-open-world="${w.key}" style="background:linear-gradient(135deg, ${w.color1}, ${w.color2})"><div style="font-size:2rem">${w.icon}</div><div class="world-name">${w.name}</div><div class="world-sub">${wins} wins</div><div class="progress"><span style="width:${progress}%"></span></div><div class="world-sub">${list.length ? `${list.length} tasks inside` : "Tap to enter"}</div></div>`; }).join("")}</div></div>${renderLongGoals()}${renderShortGoals()}${renderQuestBoard()}${renderCreationFlow()}`;
+  }
+
+  function renderWorldView(){
+    const world = worldByKey(state.worlds.activeWorld);
+    const list = state.tasks.byWorld[world.key] || [];
+    const wins = list.filter(t => t.done).length;
+    const progress = Math.min(100, wins * 15);
+    return `<div class="card"><div class="row between wrap"><div><div class="label">Current World</div><div class="big">${world.icon} ${world.name}</div></div><button class="secondary" id="backToMapBtn">← Map</button></div><div class="progress"><span style="width:${progress}%"></span></div><div class="muted">${wins} wins in this world</div></div>
+      <div class="card"><div class="section-title">⏱️ Choose Focus Time</div><div class="quick-list">${[10,15,20,25,30].map(m => `<button class="small ${state.timing.selectedTimerMinutes===m?'active':'secondary'}" data-time="${m}">${m} min</button>`).join("")}</div></div>
+      <div class="card card-strong center"><div class="section-title">⏱️ Focus Timer</div><div class="focus-timer"><div class="timer-time">${formatTime(state.timing.timerSeconds)}</div><div class="muted">${state.timing.timerRunning ? "Focus mode on" : `${state.timing.selectedTimerMinutes}-minute session ready`}</div></div><div class="row wrap center" style="justify-content:center"><button id="startTimerBtn">${state.timing.timerRunning ? "Running..." : "Start"}</button><button class="secondary" id="pauseTimerBtn">Pause</button><button class="ghost" id="resetTimerBtn">Reset</button></div></div>
+      <div class="card"><div class="row between wrap"><div class="section-title" style="margin:0;">✨ Quick Wins</div><div class="muted">One tap adds straight into ${world.name}</div></div><div class="quick-list">${world.templates.map(t => `<button class="small" type="button" data-template-add="${escapeAttr(t)}">＋ ${escapeHtml(t)}</button>`).join("")}</div></div>
+      <div class="card"><div class="section-title">➕ Add Custom Task</div><div class="row wrap"><input id="taskInput" placeholder="Type your own task for ${escapeAttr(world.name)}..." /><button id="addWorldTaskBtn">Add Task</button></div><div class="muted" style="margin-top:8px;">Press Enter or tap Add Task to save it instantly.</div></div>
+      <div class="card"><div class="section-title">✅ Tasks in ${world.name}</div>${list.length ? list.map(task => `<div class="task ${task.done ? 'done' : ''}"><div style="flex:1"><div>${escapeHtml(task.text)}</div>${task.linkedQuestId ? `<div class="muted" style="font-size:.82rem;">🎯 Linked to quest</div>` : ``}${task.linkedShortGoalId ? `<div class="muted" style="font-size:.82rem;">🌱 Moves a goal forward</div>` : ``}${state.ui.editing.taskId === task.id && state.ui.editing.taskWorld === world.key ? `<div class="card" style="margin-top:10px;"><input id="editTaskText" value="${escapeAttr(task.text)}" /><select id="editTaskShortGoal" style="margin-top:8px;">${renderShortGoalOptions(task.linkedShortGoalId)}</select><select id="editTaskQuest" style="margin-top:8px;">${renderQuestOptions(task.linkedQuestId)}</select><div class="row wrap" style="margin-top:8px;"><button class="small" data-save-task="${task.id}" data-save-world="${world.key}">Save</button><button class="small secondary" id="cancelEditTask">Cancel</button></div></div>` : ``}</div>${!task.done ? `<div class="row wrap"><button class="small" data-complete="${task.id}">✔</button><button class="small secondary" data-edit-task="${task.id}" data-edit-world="${world.key}">Edit</button><button class="small secondary" data-delete-task="${task.id}" data-delete-world="${world.key}">Delete</button><button class="small secondary" data-make-recurring-task="${task.id}" data-make-recurring-world="${world.key}">Repeat</button></div>` : `<span class="badge rare">done</span>`}</div>`).join("") : `<div class="muted">No tasks here yet. Tap a quick win or add your own.</div>`}</div>`;
+  }
+
+  function renderProfileView(){
+    const profile = state.profile || {};
+    const wins = recentWins(9);
+    const levelData = getLevelProgress();
+    const heroShots = wins.filter(win => win.image).slice(0,3);
+    return `<div class="card card-strong premium-hero">
+      <div class="profile-hero">
+        <div class="profile-photo-stack">
+          ${profile.photo ? `<img src="${profile.photo}" alt="Profile" class="avatar-lg" />` : `<div class="avatar-lg">${escapeHtml(initials(state.identity.name || 'Ta-da'))}</div>`}
+          <label class="upload-label">Upload profile photo<input id="profilePhotoInput" class="hidden-file" type="file" accept="image/*" /></label>
+        </div>
+        <div style="flex:1;min-width:210px;">
+          <div class="label">My Game</div>
+          <div style="font-size:1.65rem;font-weight:900;margin-top:6px;">${escapeHtml(state.identity.name || 'Player One')}</div>
+          <div class="muted" style="margin-top:4px;">${escapeHtml(profile.vibe || 'Winning my day, one Ta-da at a time ✨')}</div>
+          <div class="muted" style="margin-top:8px;font-weight:800;">${escapeHtml(profile.headline || "Life's a game. Let's win it!")}</div>
+          <div class="mini-progress" style="margin-top:16px;">
+            <div class="mini-stat"><div class="n" style="font-weight:900;">${levelData.level}</div><div class="muted">Level</div></div>
+            <div class="mini-stat"><div class="n" style="font-weight:900;">${state.progression.streak || 0}</div><div class="muted">Streak 🔥</div></div>
+            <div class="mini-stat"><div class="n" style="font-weight:900;">${totalCompletedTasks()}</div><div class="muted">Wins 🏆</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-gallery">
+        ${[0,1,2].map(i => heroShots[i]?.image ? `<img src="${heroShots[i].image}" alt="Featured win" class="profile-gallery-shot" />` : `<div class="profile-gallery-shot" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--muted);">${i === 0 ? 'Your top win' : 'Add more win photos'}</div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">✨ Personalize Your Profile</div>
+      <div class="row wrap" style="margin-top:10px;">
+        <input id="profileNameInput" placeholder="Display name" value="${escapeAttr(state.identity.name || '')}" />
+        <input id="profileVibeInput" placeholder="Your vibe" value="${escapeAttr(profile.vibe || '')}" />
+      </div>
+      <div style="margin-top:10px;"><button id="saveProfileBtn">Save My Profile</button></div>
+    </div>
+    <div class="card">
+      <div class="row between wrap"><div class="section-title" style="margin:0;">🏆 Recent Visual Wins</div><div class="muted">${wins.length} saved</div></div>
+      <div class="subtle-divider"></div>
+      ${wins.length ? `<div class="win-grid">${wins.map(win => `<div class="win-card"><div class="row between wrap"><div><div style="font-weight:900;">${escapeHtml(win.title)}</div><div class="muted" style="font-size:.82rem;">${escapeHtml(worldLabel(win.world))}</div></div><div class="muted" style="font-size:.8rem;">${new Date(win.createdAt).toLocaleDateString()}</div></div>${win.image ? `<img src="${win.image}" alt="Win image" class="win-shot" />` : `<div class="win-shot" style="display:flex;align-items:center;justify-content:center;">📷 Capture your win</div>`}<div class="row wrap" style="margin-top:10px;"><label class="upload-label">Upload photo<input class="hidden-file" type="file" accept="image/*" data-win-upload="${win.id}" /></label><label class="upload-label">Take photo<input class="hidden-file" type="file" accept="image/*" capture="environment" data-win-camera="${win.id}" /></label></div><textarea class="note-input" data-win-note="${win.id}" placeholder="What made this a win?">${escapeHtml(win.note || '')}</textarea></div>`).join('')}</div>` : `<div class="muted">Complete a task and your wins will show up here ready for photos and notes.</div>`}
+    </div>`;
+  }
+
+
+  function renderImportantDatesManager(){
+    const editingId = state.ui.editing && state.ui.editing.importantDateId;
+    const items = (state.reminders.importantDates || []).slice().sort((a,b) => String(a.date).localeCompare(String(b.date)));
+    return `<div class="card"><div class="section-title">📅 Important Dates</div>
+      <div class="muted">Add birthdays, bills, appointments, or deadlines here so they show up in Today.</div>
+      <div class="card" style="margin:10px 0 0 0;">
+        <div style="font-weight:900; margin-bottom:8px;">Add Important Date</div>
+        <div class="row wrap">
+          <input id="importantDateTitle" placeholder="What is coming up?" />
+          <input id="importantDateDate" type="date" />
+          <input id="importantDateNotes" placeholder="Optional note" />
+          <button id="addImportantDateBtn">Add Date</button>
+        </div>
+      </div>
+      ${items.length ? items.map(item => {
+        const editing = String(editingId) === String(item.id);
+        return `<div class="card" style="margin:10px 0 0 0;">${editing ? `
+          <div class="row wrap">
+            <input id="editImportantDateTitle" value="${escapeAttr(item.title)}" />
+            <input id="editImportantDateDate" type="date" value="${escapeAttr(item.date)}" />
+            <input id="editImportantDateNotes" value="${escapeAttr(item.notes || "")}" />
+            <div class="row wrap"><button class="small" data-save-important-date="${item.id}">Save</button><button class="small secondary" id="cancelEditImportantDate">Cancel</button></div>
+          </div>` : `
+          <div class="row between wrap">
+            <div>
+              <div style="font-weight:900">${escapeHtml(item.title)}</div>
+              <div class="muted" style="margin-top:4px;">${escapeHtml(item.date)}${item.notes ? ` • ${escapeHtml(item.notes)}` : ""}</div>
+            </div>
+            <div class="row wrap">
+              <button class="small secondary" data-edit-important-date="${item.id}">Edit</button>
+              <button class="small secondary" data-delete-important-date="${item.id}">Delete</button>
+            </div>
+          </div>`}
+        </div>`;
+      }).join("") : `<div class="muted" style="margin-top:12px;">No important dates yet.</div>`}
+    </div>`;
+  }
+
+  function renderGoalsView(){ return `${renderLongGoals()}${renderShortGoals()}${renderQuestBoard()}${renderCreationFlow()}${renderImportantDatesManager()}${renderRecurringSystemsCard()}`; }
+  function renderInventoryView(){ return `${renderInventoryCard()}${renderStyleEquipmentCard()}${renderShopCard()}${renderAchievementsCard()}<div class="card"><div class="section-title">💰 Wallet</div><div class="stats"><div class="pill"><div class="n">${state.progression.coins}</div><div class="muted">Coins</div></div><div class="pill"><div class="n">${state.progression.xp}</div><div class="muted">XP</div></div></div></div>`; }
+
+  function renderWinsView(){
+    const topWorld = getTopWorld();
+    const mode = COMPANION_MODES[state.equipment.equipped.mode] || COMPANION_MODES.hype;
+    const allWins = recentWins(50);
+    const wins = isPremiumUser() ? allWins : allWins.slice(0,3);
+    const latestWin = wins[0] || getWinLog()[0] || null;
+    const lockedTeaser = !isPremiumUser() ? `
+      <div class="locked-card" style="margin-top:14px;">
+        <div class="section-title">🔒 Full win history is part of Ta-da Elite</div>
+        <div class="muted">Free players can view the latest 3 wins. Upgrade to unlock your full history, photo capture, and premium momentum tracking.</div>
+        <button id="winsUpgradeBtn" style="margin-top:12px;">Unlock Your Full Potential</button>
+      </div>` : ``;
+    return `<div class="card center"><div class="section-title">✨ Shareable Daily Wins</div><div class="muted">Because getting shit done deserves to be seen.</div></div>
+      <div id="dailyWinCard" class="share-card">
+        <div class="share-title">✨ Ta-da Day ✨</div>
+        <div style="font-weight:900;font-size:1.1rem">${escapeHtml(state.identity.name || "Your")} Ta-da Wins</div>
+        <div class="muted" style="margin-top:4px">${escapeHtml(mode.share())}</div>
+        ${latestWin ? `<div style="margin-top:12px;background:rgba(255,255,255,.78);border-radius:18px;padding:12px;"><div style="font-weight:900;">Latest win: ${escapeHtml(latestWin.title)}</div><div class="muted" style="margin-top:4px;">${escapeHtml(worldByKey(latestWin.world).name)} • Getting shit done.</div></div>` : ``}
+        <div class="share-grid">
+          <div class="share-box"><div class="n">${state.progression.todayXP[todayKey()] || 0}</div><div class="muted">XP Today</div></div>
+          <div class="share-box"><div class="n">${totalCompletedTasks()}</div><div class="muted">Wins</div></div>
+          <div class="share-box"><div class="n">${state.progression.streak}</div><div class="muted">Streak 🔥</div></div>
+          <div class="share-box"><div class="n">${topWorld ? escapeHtml(topWorld.icon) : "✨"}</div><div class="muted">${topWorld ? escapeHtml(topWorld.name) : "Top World"}</div></div>
+        </div>
+        <div class="row wrap center" style="justify-content:center;margin-top:14px;">
+          <button id="shareWinsBtn">Share My Wins</button>
+          <button id="shareThreadsBtn" class="secondary">Post to Threads</button>
+          <button id="shareFacebookBtn" class="secondary">Facebook</button>
+          <button id="instagramCardBtn" class="secondary">Instagram Card</button>
+          <button id="copyWinCaptionBtn" class="ghost">Copy Caption</button>
+        </div>
+        <div class="muted" style="margin-top:10px;font-size:.82rem;">Share because you’re proud — not because you were told to market.</div>
+      </div>
+      <div class="card"><div class="section-title">🏆 Win History</div><div class="muted">${isPremiumUser() ? "Your full recent win history." : "Previewing your latest 3 wins on the free plan."}</div>${wins.length ? wins.map(win => `<div class="task" style="align-items:flex-start;"><div style="flex:1;"><div style="font-weight:900">${escapeHtml(win.title)}</div><div class="muted" style="margin-top:4px;">${escapeHtml(worldByKey(win.world).name)} • ${new Date(win.createdAt).toLocaleString()}</div>${win.note ? `<div style="margin-top:8px;">${escapeHtml(win.note)}</div>` : ``}${win.image ? `<img src="${win.image}" alt="Win photo" style="width:100%;border-radius:18px;margin-top:10px;max-height:210px;object-fit:cover;" />` : `${isPremiumUser() ? `<span class="row wrap" style="margin-top:10px;"><label class="secondary small" style="display:inline-flex;cursor:pointer;">Upload Photo<input type="file" accept="image/*" data-win-upload="${escapeAttr(win.id)}" style="display:none" /></label><label class="secondary small" style="display:inline-flex;cursor:pointer;">Take Photo<input type="file" accept="image/*" capture="environment" data-win-camera="${escapeAttr(win.id)}" style="display:none" /></label></span>` : ``}`}${isPremiumUser() ? `<input data-win-note="${escapeAttr(win.id)}" value="${escapeAttr(win.note || "")}" placeholder="Add a note about this win" style="margin-top:10px;" />` : ``}</div></div>`).join("") : `<div class="muted" style="margin-top:12px;">Complete a task to create your first win log.</div>`}${lockedTeaser}</div>`;
+  }
+
+
+  function getShareUrl(){
+    return window.location.origin + window.location.pathname;
+  }
+
+  function getWinShareText(){
+    const mode = COMPANION_MODES[state.equipment.equipped.mode] || COMPANION_MODES.hype;
+    const topWorld = getTopWorld();
+    const latestWin = getWinLog()[0];
+    const latestLine = latestWin ? `Latest win: ${latestWin.title}` : `Latest win: showing up for myself`;
+    return `${state.identity.name || "I"} am getting shit done with Ta-da ✨
+${latestLine}
+XP today: ${state.progression.todayXP[todayKey()] || 0}
+Wins: ${totalCompletedTasks()}
+Streak: ${state.progression.streak}
+Top world: ${topWorld ? topWorld.name : "None yet"}
+${mode.share()}
+
+Play here: ${getShareUrl()}`;
+  }
+
+  async function copyText(text, successMessage="✨ Copied to clipboard"){
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        await navigator.clipboard.writeText(text);
+        showCelebration(0, successMessage, "common");
+      } else {
+        alert(text);
+      }
+    } catch {
+      alert(text);
+    }
+  }
+
+  async function shareDailyWins(){
+    const text = getWinShareText();
+    if(navigator.share){
+      try{ await navigator.share({ title:"My Ta-da Daily Wins", text, url:getShareUrl() }); return; } catch {}
+    }
+    await copyText(text, "✨ Daily wins copied to clipboard");
+  }
+
+  async function shareToThreads(){
+    const text = getWinShareText();
+    await copyText(text, "🧵 Threads caption copied");
+    window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+  }
+
+  function shareToFacebook(){
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}&quote=${encodeURIComponent(getWinShareText())}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
+  }
+
+  function drawInstagramCard(){
+    const latestWin = getWinLog()[0];
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext("2d");
+
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, "#f5d0fe");
+    gradient.addColorStop(0.5, "#dbeafe");
+    gradient.addColorStop(1, "#ffedd5");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "rgba(255,255,255,0.82)";
+    roundRect(ctx, 70, 140, 940, 1520, 42);
+    ctx.fill();
+
+    ctx.fillStyle = "#7c3aed";
+    ctx.font = "bold 72px sans-serif";
+    ctx.fillText("Ta-da ✨", 120, 260);
+
+    ctx.fillStyle = "#1f2340";
+    ctx.font = "bold 58px sans-serif";
+    ctx.fillText("Getting shit done.", 120, 380);
+
+    ctx.font = "36px sans-serif";
+    ctx.fillStyle = "#475569";
+    wrapCanvasText(ctx, `${state.identity.name || "I"} am turning life into a game I can actually win.`, 120, 470, 840, 52);
+
+    ctx.fillStyle = "#ffffff";
+    roundRect(ctx, 120, 620, 840, 220, 28);
+    ctx.fill();
+
+    ctx.fillStyle = "#1f2340";
+    ctx.font = "bold 44px sans-serif";
+    ctx.fillText(latestWin ? latestWin.title : "Showed up for myself today", 160, 705);
+    ctx.font = "30px sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText(latestWin ? worldByKey(latestWin.world).name : "Tiny wins still count", 160, 760);
+
+    const stats = [
+      [`${state.progression.todayXP[todayKey()] || 0}`, "XP Today"],
+      [`${totalCompletedTasks()}`, "Wins"],
+      [`${state.progression.streak}`, "Streak"]
+    ];
+    stats.forEach((stat, i) => {
+      const x = 120 + (i * 280);
+      ctx.fillStyle = "#ffffff";
+      roundRect(ctx, x, 920, 240, 220, 28);
+      ctx.fill();
+      ctx.fillStyle = "#1f2340";
+      ctx.font = "bold 54px sans-serif";
+      ctx.fillText(stat[0], x + 36, 1015);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "30px sans-serif";
+      ctx.fillText(stat[1], x + 36, 1070);
+    });
+
+    ctx.fillStyle = "#1f2340";
+    ctx.font = "bold 40px sans-serif";
+    ctx.fillText("Share your wins. Inspire your people.", 120, 1280);
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "32px sans-serif";
+    wrapCanvasText(ctx, "Life’s a game. Let’s win it with Ta-da.", 120, 1360, 840, 46);
+
+    ctx.fillStyle = "#7c3aed";
+    ctx.font = "bold 30px sans-serif";
+    ctx.fillText(getShareUrl(), 120, 1560);
+    return canvas;
+  }
+
+  function roundRect(ctx, x, y, width, height, radius){
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
+    const words = String(text || "").split(" ");
+    let line = "";
+    let cursorY = y;
+    for(const word of words){
+      const testLine = `${line}${word} `;
+      if(ctx.measureText(testLine).width > maxWidth && line){
+        ctx.fillText(line.trim(), x, cursorY);
+        line = `${word} `;
+        cursorY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    if(line) ctx.fillText(line.trim(), x, cursorY);
+  }
+
+  function createInstagramCard(){
+    const canvas = drawInstagramCard();
+    const url = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "tada-win-card.png";
+    link.click();
+    showCelebration(0, "📸 Instagram card downloaded", "rare");
+  }
+
+  function render(){
+    runDailyResetIfNeeded();
+    const params = new URLSearchParams(window.location.search);
+    if(params.get("checkout") === "success"){
+      refreshPlanStatus({ silent:true });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    maybeApplyTheme();
+    const app = $("#app");
+    if(!state.auth || !state.auth.loggedIn){
+      $("#tabs").innerHTML = "";
+      app.innerHTML = renderAuthView();
+      bind();
+      save();
+      return;
+    }
+    renderTabs();
+    if(state.ui.view === "today") app.innerHTML = renderTodayView();
+    else if(state.ui.view === "profile") app.innerHTML = renderProfileView();
+    else if(state.ui.view === "map") app.innerHTML = renderMapView();
+    else if(state.ui.view === "world") app.innerHTML = renderWorldView();
+    else if(state.ui.view === "goals") app.innerHTML = renderGoalsView();
+    else if(state.ui.view === "inventory") app.innerHTML = renderInventoryView();
+    else if(state.ui.view === "account") app.innerHTML = renderAccountView();
+    else app.innerHTML = renderWinsView();
+    bind();
+    save();
+  }
+
+  function bind(){
+    $("#authContinueBtn").addEventListener("click", handleAuthSubmit);
+    $("#paywallCloseBtn").addEventListener("click", closePaywall);
+    $("#paywallUpgradeBtn").addEventListener("click", goToStripe);
+    $("#paywallUnlockBtn").addEventListener("click", () => unlockPremiumFromCode($("#paywallUnlockInput").value));
+    $("#paywallUnlockInput").addEventListener("keydown", e => { if(e.key === "Enter") unlockPremiumFromCode(e.target.value); });
+    $("#openUpgradeFromAccountBtn").addEventListener("click", () => openPaywall("account"));
+    $("#accountUnlockBtn").addEventListener("click", () => unlockPremiumFromCode($("#accountUnlockCode").value));
+    $("#accountUnlockCode").addEventListener("keydown", e => { if(e.key === "Enter") unlockPremiumFromCode(e.target.value); });
+    $("#signOutBtn").addEventListener("click", signOutAccount);
+    $("#managePlanBtn").addEventListener("click", () => refreshPlanStatus());
+    $("#nameInput").addEventListener("input", e => { state.identity.name = e.target.value; save(); });
+    $("#profileNameInput").addEventListener("input", e => { state.identity.name = e.target.value; save(); });
+    $("#profileVibeInput").addEventListener("input", e => { state.profile = state.profile || {}; state.profile.vibe = e.target.value; save(); });
+    $("#saveProfileBtn").addEventListener("click", () => { celebrate(3, "👤 Profile updated!"); render(); });
+    $("#profilePhotoInput").addEventListener("change", async e => { const file = e.target.files && e.target.files[0]; if(file){ updateProfilePhoto(await fileToDataUrl(file)); celebrate(3, "📸 Profile photo saved!"); } });
+    document.querySelectorAll("[data-win-upload], [data-win-camera]").forEach(input => input.addEventListener("change", async e => {
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      if(requirePremium("win-photos")){ e.target.value = ""; return; }
+      const winId = input.dataset.winUpload || input.dataset.winCamera;
+      updateWinImage(winId, await fileToDataUrl(file));
+      celebrate(4, input.dataset.winCamera ? "📸 Win captured from camera!" : "📸 Win captured!", "rare");
+    }));
+    document.querySelectorAll("[data-win-note]").forEach(input => input.addEventListener("change", e => updateWinNote(input.dataset.winNote, e.target.value)));
+    document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.tab)));
+    $("#winsUpgradeBtn").addEventListener("click", () => openPaywall("full-history"));
+    document.querySelectorAll("[data-open-world]").forEach(btn => btn.addEventListener("click", () => setWorld(btn.dataset.openWorld)));
+    $("#backToMapBtn").addEventListener("click", () => setView("map"));
+    $("#toggleBadDayModeBtn").addEventListener("click", toggleBadDayMode);
+    $("#dailyBoxBtn").addEventListener("click", openDailyBox);
+    $("#dailyBoxBtnBottom").addEventListener("click", openDailyBox);
+    $("#shareWinsBtn").addEventListener("click", shareDailyWins);
+    $("#shareThreadsBtn").addEventListener("click", shareToThreads);
+    $("#shareFacebookBtn").addEventListener("click", shareToFacebook);
+    $("#instagramCardBtn").addEventListener("click", createInstagramCard);
+    $("#copyWinCaptionBtn").addEventListener("click", () => copyText(getWinShareText(), "✍️ Caption copied"));
+    document.querySelectorAll("[data-time]").forEach(btn => btn.addEventListener("click", () => setFocusTime(Number(btn.dataset.time))));
+    $("#startTimerBtn").addEventListener("click", startTimer);
+    $("#pauseTimerBtn").addEventListener("click", pauseTimer);
+    $("#resetTimerBtn").addEventListener("click", resetTimer);
+    document.querySelectorAll("[data-template-add]").forEach(btn => btn.addEventListener("click", () => addTemplateTask(btn.dataset.templateAdd)));
+    $("#addWorldTaskBtn").addEventListener("click", () => addWorldTask());
+    $("#taskInput").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); addWorldTask(); } });
+    document.querySelectorAll("[data-complete]").forEach(btn => btn.addEventListener("click", () => completeTask(Number(btn.dataset.complete))));
+    document.querySelectorAll("[data-complete-today]").forEach(btn => btn.addEventListener("click", () => completeTask(Number(btn.dataset.completeToday), btn.dataset.world)));
+    document.querySelectorAll("[data-edit-task]").forEach(btn => btn.addEventListener("click", () => startEditTask(btn.dataset.editWorld, Number(btn.dataset.editTask))));
+    document.querySelectorAll("[data-save-task]").forEach(btn => btn.addEventListener("click", () => saveTaskEdit(btn.dataset.saveWorld, Number(btn.dataset.saveTask))));
+    $("#cancelEditTask").addEventListener("click", clearEditing);
+    document.querySelectorAll("[data-delete-task]").forEach(btn => btn.addEventListener("click", () => deleteTask(btn.dataset.deleteWorld, Number(btn.dataset.deleteTask))));
+    document.querySelectorAll("[data-make-recurring-task]").forEach(btn => btn.addEventListener("click", () => {
+      const world = btn.dataset.makeRecurringWorld;
+      const id = Number(btn.dataset.makeRecurringTask);
+      const task = (state.tasks.byWorld[world] || []).find(t => t.id === id);
+      if(task){ saveTaskAsRecurringTemplate(task); showCelebration(0, "🔁 Task saved as recurring!", "common"); render(); }
+    }));
+    $("#addLongGoalBtn").addEventListener("click", addLongGoal);
+    $("#addShortGoalBtn").addEventListener("click", addShortGoal);
+    $("#addLinkedTaskBtn").addEventListener("click", addLinkedTask);
+    $("#addImportantDateBtn").addEventListener("click", addImportantDate);
+    document.querySelectorAll("[data-edit-long-goal]").forEach(btn => btn.addEventListener("click", () => startEditLongGoal(btn.dataset.editLongGoal)));
+    document.querySelectorAll("[data-save-long-goal]").forEach(btn => btn.addEventListener("click", () => saveLongGoalEdit(btn.dataset.saveLongGoal)));
+    $("#cancelEditLongGoal").addEventListener("click", clearEditing);
+    document.querySelectorAll("[data-delete-long-goal]").forEach(btn => btn.addEventListener("click", () => deleteLongGoal(btn.dataset.deleteLongGoal)));
+    document.querySelectorAll("[data-edit-short-goal]").forEach(btn => btn.addEventListener("click", () => startEditShortGoal(btn.dataset.editShortGoal)));
+    document.querySelectorAll("[data-save-short-goal]").forEach(btn => btn.addEventListener("click", () => saveShortGoalEdit(btn.dataset.saveShortGoal)));
+    $("#cancelEditShortGoal").addEventListener("click", clearEditing);
+    document.querySelectorAll("[data-delete-short-goal]").forEach(btn => btn.addEventListener("click", () => deleteShortGoal(btn.dataset.deleteShortGoal)));
+    document.querySelectorAll("[data-edit-important-date]").forEach(btn => btn.addEventListener("click", () => startEditImportantDate(btn.dataset.editImportantDate)));
+    document.querySelectorAll("[data-save-important-date]").forEach(btn => btn.addEventListener("click", () => saveImportantDateEdit(btn.dataset.saveImportantDate)));
+    $("#cancelEditImportantDate").addEventListener("click", clearEditing);
+    document.querySelectorAll("[data-delete-important-date]").forEach(btn => btn.addEventListener("click", () => deleteImportantDate(btn.dataset.deleteImportantDate)));
+    document.querySelectorAll("[data-buy]").forEach(btn => btn.addEventListener("click", () => buy(btn.dataset.buy, btn)));
+    document.querySelectorAll("[data-equip]").forEach(btn => btn.addEventListener("click", () => { const [kind, value] = btn.dataset.equip.split(":"); equip(kind, value); }));
+  }
+
+  function escapeHtml(s){ return String(s ?? "").replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+  function escapeAttr(s){ return escapeHtml(s).replace(/"/g, "&quot;"); }
+
+  try{
+    render();
+  } catch (err){
+    const app = document.getElementById("app");
+    if(app){
+      app.innerHTML = `
+        <div class="card">
+          <div class="section-title">⚠️ Ta-da hit a loading problem</div>
+          <div class="muted">The app file loaded, but a script error blocked the UI.</div>
+          <div class="alert-line" style="margin-top:12px; display:block;">
+            <div style="font-weight:900; margin-bottom:6px;">Error</div>
+            <div style="word-break:break-word;">${String(err && err.message ? err.message : err)}</div>
+          </div>
+        </div>
+      `;
+    }
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>
