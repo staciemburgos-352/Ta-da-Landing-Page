@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ta-da Elite — Life’s a game. Let’s win it with Ta-da.</title>
+  <meta name="description" content="One place for your whole life — and finally a way to feel good about getting your shit done. Ta-da helps you organize your life, reward your progress, and build momentum that actually sticks." />
+  <meta name="theme-color" content="#7c3aed" />
+  <style>
+    :root{
+      --bg1:#dbeafe;
+      --bg2:#ede9fe;
+      --bg3:#ffedd5;
+      --card:rgba(255,255,255,.82);
+      --card-strong:rgba(255,255,255,.94);
+      --text:#1f2340;
+      --muted:#5b6780;
+      --primary:#7c3aed;
+      --primary2:#0ea5e9;
+      --accent:#f59e0b;
+      --pink:#ec4899;
+      --shadow:0 18px 44px rgba(31,35,64,.10);
+      --shadow-strong:0 28px 70px rgba(31,35,64,.16);
+      --max:1140px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.58), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2) 52%, var(--bg3));
+      min-height:100vh;
+    }
+    a{text-decoration:none;color:inherit}
+    .container{width:min(var(--max), calc(100% - 28px));margin:0 auto}
+    .nav{
+      position:sticky;top:0;z-index:50;padding:14px 0;
+      backdrop-filter: blur(14px);
+      background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.28));
+      border-bottom:1px solid rgba(255,255,255,.35);
+    }
+    .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+      padding:10px 14px;border-radius:24px;background:rgba(255,255,255,.50);
+      border:1px solid rgba(255,255,255,.42);box-shadow:0 10px 24px rgba(31,35,64,.06);
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:950;letter-spacing:-.03em}
+    .brand-badge{
+      width:42px;height:42px;border-radius:16px;display:grid;place-items:center;color:#fff;
+      background:linear-gradient(135deg, var(--primary), var(--primary2), var(--accent));
+      box-shadow:0 12px 24px rgba(124,58,237,.22);font-size:1.2rem;
+    }
+    .nav-links{display:flex;gap:10px;flex-wrap:wrap}
+    .pill-link{
+      padding:10px 14px;border-radius:999px;font-weight:800;font-size:.92rem;
+      background:rgba(255,255,255,.78);border:1px solid rgba(124,58,237,.10)
+    }
+    .hero{padding:46px 0 18px}
+    .hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:24px;align-items:center}
+    .eyebrow{
+      display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.76);border:1px solid rgba(255,255,255,.56);
+      font-size:.84rem;font-weight:900;color:var(--muted)
+    }
+    h1{
+      margin:16px 0 12px;font-size:clamp(2.5rem, 6vw, 5rem);line-height:.95;letter-spacing:-.07em;font-weight:950;
+    }
+    .gradient-text{
+      background:linear-gradient(90deg, var(--primary), var(--pink), var(--accent), var(--primary2));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero-copy{
+      font-size:1.12rem;line-height:1.7;color:var(--muted);margin:0;max-width:58ch;
+    }
+    .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+    .btn{
+      border:none;cursor:pointer;border-radius:18px;padding:14px 18px;font-weight:900;
+      letter-spacing:-.02em;font-size:1rem;display:inline-flex;align-items:center;gap:10px;
+      transition:transform .15s ease, filter .15s ease, box-shadow .18s ease;
+    }
+    .btn:hover{filter:brightness(1.03)}
+    .btn:active{transform:scale(.985)}
+    .btn-primary{
+      color:#fff;background:linear-gradient(90deg, var(--primary), var(--pink), var(--primary2));
+      box-shadow:0 16px 32px rgba(124,58,237,.24);
+    }
+    .btn-secondary{
+      color:var(--text);background:rgba(255,255,255,.90);border:1px solid rgba(124,58,237,.12);
+      box-shadow:0 10px 24px rgba(31,35,64,.06);
+    }
+    .cta-note{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;color:var(--muted);font-weight:800;font-size:.92rem}
+    .cta-note span{
+      background:rgba(255,255,255,.64);border:1px solid rgba(255,255,255,.50);padding:8px 12px;border-radius:999px;
+    }
+    .hero-card{
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.52), transparent 28%),
+        linear-gradient(135deg, rgba(124,58,237,.17), rgba(236,72,153,.10), rgba(14,165,233,.14));
+      border:1px solid rgba(255,255,255,.55);border-radius:34px;padding:18px;box-shadow:var(--shadow-strong);
+    }
+    .app-window{
+      background:rgba(255,255,255,.92);border-radius:28px;padding:16px;box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.52);
+    }
+    .window-top{display:flex;gap:8px;margin-bottom:14px}
+    .window-top span{width:10px;height:10px;border-radius:999px;background:#fca5a5}
+    .window-top span:nth-child(2){background:#fcd34d}
+    .window-top span:nth-child(3){background:#86efac}
+    .mock-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px}
+    .card{
+      background:var(--card);border-radius:24px;padding:16px;border:1px solid rgba(255,255,255,.48);box-shadow:var(--shadow);
+    }
+    .card-strong{background:var(--card-strong)}
+    .mini-card{
+      padding:14px;border-radius:20px;background:rgba(255,255,255,.86);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.48)
+    }
+    .mini-badge{
+      display:inline-flex;padding:7px 10px;border-radius:999px;background:rgba(124,58,237,.10);color:var(--primary);font-weight:900;font-size:.82rem
+    }
+    .section{padding:30px 0}
+    .section-title{
+      font-size:clamp(1.85rem, 4vw, 3.1rem);line-height:1.06;letter-spacing:-.05em;margin:0 0 10px;font-weight:950;
+    }
+    .section-copy{
+      color:var(--muted);font-size:1.04rem;line-height:1.72;max-width:68ch;margin:0 auto;
+    }
+    .center{text-align:center}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .feature-card,.step,.quote,.plan-card,.compare-box,.focus-box{
+      padding:18px;border-radius:24px;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.48);box-shadow:var(--shadow);
+    }
+    .focus-box{
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.48), transparent 28%),
+        linear-gradient(135deg, rgba(124,58,237,.18), rgba(236,72,153,.10), rgba(14,165,233,.12));
+      border-radius:30px;
+      box-shadow:var(--shadow-strong);
+      padding:22px;
+    }
+    .focus-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:16px;
+      align-items:center;
+    }
+    .pop-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(255,255,255,.55);
+      font-size:.82rem;
+      font-weight:900;
+      color:var(--primary);
+    }
+    .focus-points{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+    .focus-point{
+      padding:12px 14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(255,255,255,.48);
+      font-weight:800;
+      color:var(--text);
+    }
+    .reward-loop{
+      display:grid;
+      gap:12px;
+    }
+    .loop-step{
+      padding:14px;
+      border-radius:20px;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(255,255,255,.5);
+      box-shadow:var(--shadow);
+    }
+    .loop-step strong{
+      display:block;
+      font-size:1rem;
+      margin-bottom:6px;
+    }
+    .icon{
+      width:52px;height:52px;border-radius:18px;display:grid;place-items:center;font-size:1.4rem;margin-bottom:12px;
+      background:linear-gradient(135deg, rgba(124,58,237,.18), rgba(14,165,233,.14), rgba(245,158,11,.18));
+    }
+    .feature-card h3,.step h3,.quote h3,.plan-card h3{font-size:1.08rem;font-weight:900;letter-spacing:-.03em;margin:0}
+    .feature-card p,.step p,.quote p,.plan-card p{color:var(--muted);line-height:1.65;margin:.5rem 0 0}
+    .step-no{
+      width:40px;height:40px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:950;
+      background:linear-gradient(135deg, var(--primary), var(--pink));margin-bottom:12px;
+    }
+    .compare{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+    .compare-box ul{margin:14px 0 0;padding-left:18px;color:var(--muted);line-height:1.9}
+    .after{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.24), transparent 30%),
+        linear-gradient(135deg, rgba(124,58,237,.14), rgba(236,72,153,.12), rgba(14,165,233,.10));
+    }
+    .social-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+    .premium-wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:18px;align-items:stretch}
+    .plan-card{
+      padding:22px;border-radius:32px;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,.42), transparent 28%),
+        linear-gradient(135deg, rgba(124,58,237,.20), rgba(236,72,153,.14), rgba(14,165,233,.14));
+      box-shadow:var(--shadow-strong);
+    }
+    .price{font-size:3rem;font-weight:950;letter-spacing:-.07em;margin:8px 0 0}
+    .price small{font-size:1rem;color:var(--muted);font-weight:800}
+    .checks{display:grid;gap:10px;margin:16px 0}
+    .check{
+      padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.72);font-weight:800;border:1px solid rgba(255,255,255,.5)
+    }
+    .mini-stack{display:grid;gap:12px}
+    .faq{display:grid;gap:12px;margin-top:16px}
+    details{
+      background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.48);border-radius:22px;padding:16px 18px;box-shadow:var(--shadow)
+    }
+    summary{cursor:pointer;font-weight:900;list-style:none}
+    summary::-webkit-details-marker{display:none}
+    details p{color:var(--muted);line-height:1.7;margin:10px 0 0}
+    .final-cta{
+      margin:18px 0 48px;padding:28px;border-radius:34px;text-align:center;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,.36), transparent 28%),
+        linear-gradient(135deg, rgba(124,58,237,.24), rgba(236,72,153,.16), rgba(14,165,233,.14));
+      border:1px solid rgba(255,255,255,.56);box-shadow:var(--shadow-strong)
+    }
+    .footer{padding:0 0 42px;color:var(--muted);text-align:center;font-weight:800}
+    .tiny{font-size:.92rem;color:var(--muted)}
+    @media (max-width:980px){
+      .hero-grid,.premium-wrap,.grid-3,.social-proof,.grid-2,.compare,.mock-grid,.focus-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:640px){
+      .nav-inner{align-items:flex-start;flex-direction:column}
+      .cta-row{flex-direction:column}
+      .btn{justify-content:center}
+      .hero{padding-top:30px}
+      .price{font-size:2.5rem}
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#top" class="brand">
+          <div class="brand-badge">✨</div>
+          <div>
+            <div>Ta-da Elite</div>
+            <div style="font-size:.8rem;color:var(--muted);font-weight:800;">Get your life together — in a way that feels good.</div>
+          </div>
+        </a>
+        <div class="nav-links">
+          <a class="pill-link" href="#how">How it Works</a>
+          <a class="pill-link" href="#brain">Why It Clicks</a>
+          <a class="pill-link" href="#elite">Go Elite</a>
+          <a class="pill-link" href="#faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">✨ One place for your whole life • A better way to get your shit done</div>
+          <h1>Life’s a game.<br><span class="gradient-text">Let’s win it with Ta-da.</span></h1>
+          <p class="hero-copy">
+            Ta-da brings all your tasks into one place and makes getting things done feel satisfying again.
+            Less chaos. Less guilt. More proof you’re actually handling your life like the capable person you already are.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/app.html">✨ Start My First Win</a>
+            <a class="btn btn-secondary" href="https://buy.stripe.com/aFaeVc8kF8mn9274yCgIo02" target="_blank" rel="noopener">💎 Unlock Ta-da Elite</a>
+          </div>
+          <div class="cta-note">
+            <span>🗂️ Organize everything in one space</span>
+            <span>🎉 Reward yourself for getting it done</span>
+            <span>📸 Share wins you’re proud of</span>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="app-window">
+            <div class="window-top"><span></span><span></span><span></span></div>
+            <div class="mock-grid">
+              <div class="card card-strong">
+                <div style="font-weight:900;font-size:1.15rem;">Today’s Wins</div>
+                <div style="color:var(--muted);margin-top:4px;">A cleaner, calmer way to keep your life moving.</div>
+                <div style="display:grid;gap:10px;margin-top:14px;">
+                  <div class="mini-card">✔️ Booked the appointment</div>
+                  <div class="mini-card">✔️ Reset the kitchen</div>
+                  <div class="mini-card">✔️ Sent the email I was avoiding</div>
+                </div>
+              </div>
+              <div style="display:grid;gap:12px;">
+                <div class="card">
+                  <div class="mini-badge">🏡 Cozy Cove</div>
+                  <div style="font-weight:900;font-size:1.05rem;margin-top:10px;">All your worlds, one home</div>
+                  <div class="tiny" style="margin-top:6px;">Work, home, health, money, relationships, and personal goals — all in one place.</div>
+                </div>
+                <div class="card">
+                  <div class="mini-badge">💖 Reward Loop</div>
+                  <div style="font-weight:900;font-size:1.05rem;margin-top:10px;">Getting shit done feels good here</div>
+                  <div class="tiny" style="margin-top:6px;">Stop chasing dopamine. Start earning it from your real life.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section center" id="why">
+      <div class="container">
+        <h2 class="section-title">Finally — a place for your <span class="gradient-text">whole life</span></h2>
+        <p class="section-copy">
+          Ta-da is for people carrying too many tabs in their head. Tasks. Reminders. Life admin. Goals. Appointments.
+          Loose ends. Instead of bouncing between tools and still feeling behind, you put it all here —
+          and get the little rush of satisfaction that keeps you going.
+        </p>
+        <div class="grid-3" style="margin-top:18px;">
+          <div class="feature-card">
+            <div class="icon">🗂️</div>
+            <h3>Everything in one space</h3>
+            <p>No more random notes, forgotten lists, or mental clutter. Your whole life finally has a home base.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">🎉</div>
+            <h3>Reward yourself for following through</h3>
+            <p>Not with guilt. Not with pressure. With actual momentum, visible wins, and proof that you’re showing up.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">✨</div>
+            <h3>Feels cool, not corporate</h3>
+            <p>Structured enough to help, soft enough to use when life feels messy, tired, or overwhelming.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="brain">
+      <div class="container">
+        <div class="focus-box">
+          <div class="focus-grid">
+            <div>
+              <div class="pop-badge">🧠 Especially powerful for ADHD-style brains</div>
+              <h2 class="section-title" style="margin-top:14px;">You don’t need more discipline.<br><span class="gradient-text">You need better dopamine.</span></h2>
+              <p class="section-copy" style="margin:0;max-width:none;text-align:left;">
+                Ta-da was born from the idea that some brains do not thrive on rigid systems.
+                If your brain tends to bounce, avoid, overthink, or get overwhelmed easily, this is built to work with you — not against you.
+              </p>
+              <div class="focus-points">
+                <div class="focus-point">✨ Designed for real brains — not perfect routines</div>
+                <div class="focus-point">⚡ Helps turn action into momentum instead of pressure</div>
+                <div class="focus-point">💖 Makes progress visible so your brain actually feels it</div>
+              </div>
+            </div>
+            <div class="reward-loop">
+              <div class="loop-step">
+                <strong>1. Take action</strong>
+                Add the task. Start small. Do the thing.
+              </div>
+              <div class="loop-step">
+                <strong>2. See the win</strong>
+                Check it off. Log it. Capture the proof.
+              </div>
+              <div class="loop-step">
+                <strong>3. Feel the reward</strong>
+                Let your brain register that showing up felt good.
+              </div>
+              <div class="loop-step">
+                <strong>4. Want to do it again</strong>
+                That’s the reward loop. That’s how momentum sticks.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <div class="center">
+          <h2 class="section-title">Simple. Clean. <span class="gradient-text">Actually works.</span></h2>
+          <p class="section-copy">Less friction. More action. More proof. More pride.</p>
+        </div>
+        <div class="grid-3" style="margin-top:18px;">
+          <div class="step">
+            <div class="step-no">1</div>
+            <h3>Put your life in one place</h3>
+            <p>Drop tasks into worlds like home, work, money, health, and personal growth so your brain can breathe.</p>
+          </div>
+          <div class="step">
+            <div class="step-no">2</div>
+            <h3>Knock out what matters</h3>
+            <p>Use quick adds, custom tasks, and tiny steps to get moving without the usual resistance spiral.</p>
+          </div>
+          <div class="step">
+            <div class="step-no">3</div>
+            <h3>Enjoy the damn win</h3>
+            <p>Check it off. Capture it. Share it if you want. Let yourself feel proud instead of instantly moving the goalpost.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section center">
+      <div class="container">
+        <h2 class="section-title">This is not about being perfect.<br><span class="gradient-text">It’s about being back in charge.</span></h2>
+        <div class="compare">
+          <div class="compare-box">
+            <h3>Without Ta-da</h3>
+            <ul>
+              <li>Too many lists in too many places</li>
+              <li>A constant feeling that you’re forgetting something</li>
+              <li>Getting stuff done but never feeling done</li>
+              <li>Zero reward for carrying the whole damn load</li>
+            </ul>
+          </div>
+          <div class="compare-box after">
+            <h3>With Ta-da</h3>
+            <ul>
+              <li>Your tasks organized in one clean space</li>
+              <li>Clearer focus and less brain clutter</li>
+              <li>Small wins that build real momentum</li>
+              <li>A system that helps you feel proud, not punished</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section center">
+      <div class="container">
+        <h2 class="section-title">For anyone tired of feeling scattered.<br><span class="gradient-text">Especially if your brain bounces.</span></h2>
+        <div class="social-proof">
+          <div class="quote">
+            <h3>“I finally feel like I can see my life.”</h3>
+            <p>Not just react to it. Not just survive it. Actually see it and manage it.</p>
+          </div>
+          <div class="quote">
+            <h3>“It makes getting things done feel less annoying.”</h3>
+            <p>And honestly, that is a huge win all by itself.</p>
+          </div>
+          <div class="quote">
+            <h3>“This is like a grown-up gold star system, but chic.”</h3>
+            <p>Exactly. We love structure. We just don’t want it to feel like punishment.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="elite">
+      <div class="container premium-wrap">
+        <div class="plan-card">
+          <div class="eyebrow">💎 Premium, but still fun</div>
+          <h2 class="section-title" style="margin-top:14px;">Go <span class="gradient-text">Ta-da Elite</span></h2>
+          <p class="section-copy" style="margin:0;max-width:none;text-align:left;">
+            Ta-da Elite strengthens your reward loop so showing up for your life actually feels easy and fun.
+            Not forced. Not overwhelming. Just progress you can feel.
+          </p>
+          <div class="price">$5 <small>/ month</small></div>
+          <div class="checks">
+            <div class="check">📸 Save and celebrate your wins with photos</div>
+            <div class="check">🎨 Unlock premium themes and a more elevated feel</div>
+            <div class="check">📊 Enjoy a fuller player experience with richer history</div>
+            <div class="check">✨ Built to make everyday progress feel worth it</div>
+          </div>
+          <div class="cta-row" style="margin-top:8px;">
+            <a class="btn btn-primary" href="https://buy.stripe.com/aFaeVc8kF8mn9274yCgIo02" target="_blank" rel="noopener">💖 Become Elite</a>
+            <a class="btn btn-secondary" href="/app.html">Try the App</a>
+          </div>
+          <div class="tiny" style="margin-top:12px;">You don’t need another app that nags you. You need one that helps you follow through.</div>
+        </div>
+
+        <div class="mini-stack">
+          <div class="mini-card">
+            <div class="mini-badge">🧠 Less mental clutter</div>
+            <h3 style="margin-top:10px;">A calmer way to stay on top of things</h3>
+            <p>When everything lives in one place, your brain doesn’t have to carry it all at once.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-badge">📸 More proof</div>
+            <h3 style="margin-top:10px;">See your progress, don’t just guess at it</h3>
+            <p>Wins hit differently when you can actually look back and see them.</p>
+          </div>
+          <div class="mini-card">
+            <div class="mini-badge">💅 Better energy</div>
+            <h3 style="margin-top:10px;">A system that fits your vibe</h3>
+            <p>You’re more likely to keep using something that feels good, looks good, and gets the job done.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section center" id="faq">
+      <div class="container">
+        <h2 class="section-title">Questions? <span class="gradient-text">Let’s handle it.</span></h2>
+        <div class="faq">
+          <details open>
+            <summary>Is Ta-da just another task app?</summary>
+            <p>No. It’s a life-organizing and momentum-building app. Yes, you track tasks. But the real point is helping you feel clearer, calmer, and more rewarded for handling your business.</p>
+          </details>
+          <details>
+            <summary>Is this only for ADHD?</summary>
+            <p>No. It’s for anyone who feels scattered or overloaded. It just happens to work especially well for ADHD-style brains because it’s built around reward, visibility, and lower-friction progress.</p>
+          </details>
+          <details>
+            <summary>What makes Elite worth it?</summary>
+            <p>Elite adds the richer, more premium experience — including win photos, elevated vibes, and a stronger sense of progress you can see and share.</p>
+          </details>
+          <details>
+            <summary>Can I try it first?</summary>
+            <p>Yes. Start with the app, get the feel for it, and upgrade when you’re ready for the full Ta-da Elite experience.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="final-cta">
+        <div class="eyebrow">🏆 Your next win is waiting</div>
+        <h2 class="section-title" style="margin-top:14px;">You do not need a total life overhaul.<br><span class="gradient-text">You need a better system.</span></h2>
+        <p class="section-copy" style="max-width:56ch;">
+          Put everything in one place. Get things done. Feel proud of yourself again.
+          That’s the whole play.
+        </p>
+        <div class="cta-row" style="justify-content:center;">
+          <a class="btn btn-primary" href="/app.html">✨ Start My First Win</a>
+          <a class="btn btn-secondary" href="https://buy.stripe.com/aFaeVc8kF8mn9274yCgIo02" target="_blank" rel="noopener">💎 Unlock Ta-da Elite</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div style="font-weight:900;color:var(--text);margin-bottom:8px;">Ta-da Elite</div>
+      <div>Life’s a game. Let’s win it with Ta-da.</div>
+    </div>
+  </footer>
+</body>
+</html>
